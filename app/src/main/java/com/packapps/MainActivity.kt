@@ -6,9 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.adapters.MainCardAdapter
+import com.adapters.MainCardOptionsAdapter
+import com.dto.CardTab
+import com.dto.ItemCardEmpty
+import com.dto.TypeCardTab
 import com.presenter.MainActivityPresenter
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_main.*
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
@@ -20,8 +28,59 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        Toast.makeText(this, "${presenter.sayHello()}", Toast.LENGTH_LONG).show()
+        presenter.setActivityContex(this)
 
+        bindAdapterMain()
+        bindAdapterMainOptions()
+
+
+    }
+
+
+
+    private fun bindAdapterMain() {
+        //create item empty
+        val itemCardEmpty = ItemCardEmpty(
+            R.drawable.image_card_empty, R.drawable.ic_brain_poligon_main, getString(R.string.no_sequence_audio),
+            getString(R.string.you_do_not_have_any_audio_), R.drawable.ic_arrow_next
+        )
+        val cardTab = CardTab("CardEmpty", itemCardEmpty, TypeCardTab.MAIN_LIST_EMPTY.code)
+
+        val list = mutableListOf<CardTab>()
+        list.add(cardTab)
+
+        //        rvTabMain.layoutManager = presenter.layoutManager()
+        //        rvTabMain.adapter = presenter.adapterMain()
+
+        //
+        //
+        //        presenter.adapterMain().updateList(list)
+
+        val adapter = MainCardAdapter()
+        val layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+
+        rvTabMain.layoutManager = layoutManager
+        rvTabMain.adapter = adapter
+
+        adapter.updateList(list)
+
+
+
+    }
+
+
+    private fun bindAdapterMainOptions() {
+        val list = mutableListOf<String>()
+        list.add("Create Sequence Audio")
+
+
+        val adapter = MainCardOptionsAdapter()
+        val layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+
+        rvCardOptions.layoutManager = layoutManager
+        rvCardOptions.adapter = adapter
+
+        adapter.updateList(list)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

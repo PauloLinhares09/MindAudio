@@ -7,4 +7,5 @@
     <dimen name="card_radius_options">16dp</dimen>
     <dimen name="text_button_options">17sp</dimen>
     <dimen name="eight">8dp</dimen>
+    <dimen name="margin_bottom_card">25dp</dimen>
 </resources>

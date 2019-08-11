@@ -16,8 +16,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             tools:listitem="@layout/card_item_main"
-            app:layout_constraintTop_toTopOf="parent" android:id="@+id/recyclerView"
-            app:layout_constraintBottom_toTopOf="@+id/recyclerView2"/>
+            app:layout_constraintTop_toTopOf="parent" android:id="@+id/rvTabMain"
+            app:layout_constraintBottom_toTopOf="@+id/rvCardOptions"/>
 
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
@@ -26,6 +26,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintBottom_toBottomOf="parent" android:id="@+id/recyclerView2"/>
+            app:layout_constraintBottom_toBottomOf="parent" android:id="@+id/rvCardOptions"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
