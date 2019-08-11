@@ -5,4 +5,5 @@
     <string name="you_do_not_have_any_audio_">You do not have any audio sequence created. Start wit a single trace. Try
         now!
     </string>
+    <string name="new_audio_sequence">New audio Sequence</string>
 </resources>

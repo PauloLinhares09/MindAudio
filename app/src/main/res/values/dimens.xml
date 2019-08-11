@@ -4,4 +4,7 @@
     <dimen name="card_elevation">2dp</dimen>
     <dimen name="text_title">25dp</dimen>
     <dimen name="text_description">18sp</dimen>
+    <dimen name="card_radius_options">16dp</dimen>
+    <dimen name="text_button_options">17sp</dimen>
+    <dimen name="eight">8dp</dimen>
 </resources>
