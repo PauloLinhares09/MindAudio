@@ -65,16 +65,16 @@ class MainActivity : AppCompatActivity() {
         list.add(ItemOption("Delete a Sequence Audio", R.drawable.ic_delete))
 
 
-        val adapter = MainCardOptionsAdapter()
-        val layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+
+        val layoutManager = presenter.layoutManager()
         val snapHelper = LinearSnapHelper()
         snapHelper.findSnapView(layoutManager)
         snapHelper.attachToRecyclerView(rvCardOptions)
 
         rvCardOptions.layoutManager = layoutManager
-        rvCardOptions.adapter = adapter
+        rvCardOptions.adapter = presenter.adapterMainTabOptions()
 
-        adapter.updateList(list)
+        presenter.adapterMainTabOptions().updateList(list)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

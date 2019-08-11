@@ -2,6 +2,7 @@ package com.application
 
 import android.app.Application
 import com.adapters.MainCardAdapter
+import com.adapters.MainCardOptionsAdapter
 import com.di.AdaptersContract
 import com.di.AdaptersImpl
 import com.presenter.MainActivityPresenter
@@ -28,8 +29,9 @@ class ProjectApplication : Application(){
         //Single instance from repository
         single<AdaptersContract>{ AdaptersImpl() }
         single{ MainCardAdapter() }
+        single { MainCardOptionsAdapter() }
 
         //Factory
-        factory { MainActivityPresenter(get(), get()) }
+        factory { MainActivityPresenter(get(), get(), get()) }
     }
 }
