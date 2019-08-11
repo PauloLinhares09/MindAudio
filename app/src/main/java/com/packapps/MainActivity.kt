@@ -52,22 +52,9 @@ class MainActivity : AppCompatActivity() {
         val list = mutableListOf<CardTab>()
         list.add(cardTab)
 
-        //        rvTabMain.layoutManager = presenter.layoutManager()
-        //        rvTabMain.adapter = presenter.adapterMain()
-
-        //
-        //
-        //        presenter.adapterMain().updateList(list)
-
-        val adapter = MainCardAdapter()
-        val layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-
-        rvTabMain.layoutManager = layoutManager
-        rvTabMain.adapter = adapter
-
-        adapter.updateList(list)
-
-
+        rvTabMain.layoutManager = presenter.layoutManager()
+        rvTabMain.adapter = presenter.adapterMain()
+        presenter.adapterMain().updateList(list)
 
     }
 

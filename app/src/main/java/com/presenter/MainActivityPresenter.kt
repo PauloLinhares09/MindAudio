@@ -1,17 +1,15 @@
 package com.presenter
 
 import android.app.Activity
-import com.di.AdaptersProject
-import com.di.HelloRepository
+import com.adapters.MainCardAdapter
+import com.di.AdaptersContract
 
-class MainActivityPresenter(val helloRepositoryContract: HelloRepository.HelloRepositoryContract, val adapters : AdaptersProject.AdaptersContract){
+class MainActivityPresenter(val adaptersContract: AdaptersContract, val adapter : MainCardAdapter){
 
     lateinit var activity : Activity
 
-    fun sayHello() = "${helloRepositoryContract.getHello()} from $this"
-
-    fun adapterMain() = adapters.adapterMain()
-    fun layoutManager() = adapters.layoutManager(activity)
+    fun adapterMain() = adaptersContract.adapterMain(adapter)
+    fun layoutManager() = adaptersContract.layoutManager(activity)
 
     fun setActivityContex(activity: Activity){
         this.activity = activity

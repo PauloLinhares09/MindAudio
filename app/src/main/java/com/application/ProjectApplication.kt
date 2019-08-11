@@ -1,8 +1,9 @@
 package com.application
 
 import android.app.Application
-import com.di.AdaptersProject
-import com.di.HelloRepository
+import com.adapters.MainCardAdapter
+import com.di.AdaptersContract
+import com.di.AdaptersImpl
 import com.presenter.MainActivityPresenter
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -25,8 +26,8 @@ class ProjectApplication : Application(){
 
     val appModule = module {
         //Single instance from repository
-        single<HelloRepository.HelloRepositoryContract>{HelloRepository.HelloRepositoryImpl()}
-        single<AdaptersProject.AdaptersContract>{AdaptersProject.AdaptersImpl() }
+        single<AdaptersContract>{ AdaptersImpl() }
+        single{ MainCardAdapter() }
 
         //Factory
         factory { MainActivityPresenter(get(), get()) }

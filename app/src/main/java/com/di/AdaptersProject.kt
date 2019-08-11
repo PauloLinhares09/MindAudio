@@ -6,22 +6,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.adapters.MainCardAdapter
 
-class AdaptersProject{
 
-    interface AdaptersContract{
-        fun adapterMain() : MainCardAdapter
-        fun layoutManager(activity: Activity): RecyclerView.LayoutManager
+interface AdaptersContract{
+    fun adapterMain(adapterMainCardAdapter: MainCardAdapter) : MainCardAdapter
+    fun layoutManager(activity: Activity): LinearLayoutManager
+}
+
+class AdaptersImpl : AdaptersContract {
+    override fun layoutManager(activity: Activity): LinearLayoutManager {
+        return LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
     }
 
-    class AdaptersImpl : AdaptersContract {
-        override fun layoutManager(activity: Activity): RecyclerView.LayoutManager {
-            return LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
-        }
-
-        override fun adapterMain(): MainCardAdapter {
-            val adapter = MainCardAdapter()
-
-            return adapter
-        }
-    }
+    override fun adapterMain(adapterMainCardAdapter: MainCardAdapter): MainCardAdapter = adapterMainCardAdapter
 }
