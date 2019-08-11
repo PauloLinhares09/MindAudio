@@ -7,11 +7,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import com.adapters.MainCardAdapter
 import com.adapters.MainCardOptionsAdapter
 import com.dto.CardTab
 import com.dto.ItemCardEmpty
+import com.dto.ItemOption
 import com.dto.TypeCardTab
 import com.presenter.MainActivityPresenter
 
@@ -70,12 +73,16 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun bindAdapterMainOptions() {
-        val list = mutableListOf<String>()
-        list.add("Create Sequence Audio")
+        val list = mutableListOf<ItemOption>()
+        list.add(ItemOption("Create Sequence Audio", R.drawable.ic_arrow_next))
+        list.add(ItemOption("Delete a Sequence Audio", R.drawable.ic_delete))
 
 
         val adapter = MainCardOptionsAdapter()
         val layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        val snapHelper = LinearSnapHelper()
+        snapHelper.findSnapView(layoutManager)
+        snapHelper.attachToRecyclerView(rvCardOptions)
 
         rvCardOptions.layoutManager = layoutManager
         rvCardOptions.adapter = adapter
