@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SnapHelper
 import com.adapters.MainCardAdapter
 import com.adapters.MainCardOptionsAdapter
 
@@ -12,9 +13,12 @@ interface AdaptersContract{
     fun adapterMain(adapterMainCardAdapter: MainCardAdapter) : MainCardAdapter
     fun layoutManager(activity: Activity): LinearLayoutManager
     fun adapterMainTabOptions(adapterTabOptionsAdapter: MainCardOptionsAdapter): MainCardOptionsAdapter
+    fun snapHelper(snapHelper: SnapHelper): SnapHelper
 }
 
 class AdaptersImpl : AdaptersContract {
+    override fun snapHelper(snapHelper: SnapHelper): SnapHelper = snapHelper
+
     override fun adapterMainTabOptions(adapterTabOptionsAdapter: MainCardOptionsAdapter): MainCardOptionsAdapter  =  adapterTabOptionsAdapter
 
     override fun layoutManager(activity: Activity): LinearLayoutManager {

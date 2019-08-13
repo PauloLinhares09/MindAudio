@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val layoutManager = presenter.layoutManager()
-        val snapHelper = LinearSnapHelper()
+        val snapHelper = presenter.snapHelper()
         snapHelper.findSnapView(layoutManager)
         snapHelper.attachToRecyclerView(rvCardOptions)
 
