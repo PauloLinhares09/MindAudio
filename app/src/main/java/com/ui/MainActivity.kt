@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         presenter.setActivityContex(this)
 
-        bindAdapterMain()
+//        bindAdapterMain()
         bindAdapterMainOptions()
 
 
@@ -34,25 +34,25 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private fun bindAdapterMain() {
-        //create item empty
-        val itemCardEmpty = ItemCardEmpty(
-            R.drawable.image_card_empty,
-            R.drawable.ic_brain_poligon_main, getString(R.string.no_sequence_audio),
-            getString(R.string.you_do_not_have_any_audio_),
-            R.drawable.ic_arrow_next
-        )
-//        val cardTab = CardTab("CardEmpty", itemCardEmpty, TypeCardTab.MAIN_LIST_EMPTY.code)
-        val cardTab = CardTab("LIST", itemCardEmpty, TypeCardTab.MAIN_LIST.code)
-
-        val list = mutableListOf<CardTab>()
-        list.add(cardTab)
-
-        rvTabMain.layoutManager = presenter.layoutManager()
-        rvTabMain.adapter = presenter.adapterMain()
-        presenter.adapterMain().updateList(list)
-
-    }
+//    private fun bindAdapterMain() {
+//        //create item empty
+//        val itemCardEmpty = ItemCardEmpty(
+//            R.drawable.image_card_empty,
+//            R.drawable.ic_brain_poligon_main, getString(R.string.no_sequence_audio),
+//            getString(R.string.you_do_not_have_any_audio_),
+//            R.drawable.ic_arrow_next
+//        )
+////        val cardTab = CardTab("CardEmpty", itemCardEmpty, TypeCardTab.MAIN_LIST_EMPTY.code)
+//        val cardTab = CardTab("LIST", itemCardEmpty, TypeCardTab.MAIN_LIST.code)
+//
+//        val list = mutableListOf<CardTab>()
+//        list.add(cardTab)
+//
+//        rvTabMain.layoutManager = presenter.layoutManager()
+//        rvTabMain.adapter = presenter.adapterMain()
+//        presenter.adapterMain().updateList(list)
+//
+//    }
 
 
     private fun bindAdapterMainOptions() {

@@ -8,6 +8,7 @@
     <dimen name="text_button_options">17sp</dimen>
     <dimen name="eight">8dp</dimen>
     <dimen name="margin_bottom_card">25dp</dimen>
-    <dimen name="card_from_list_height">390dp</dimen>
+    <dimen name="card_from_list_height">310dp</dimen>
     <dimen name="card_from_list_width">260dp</dimen>
+    <dimen name="card_list_radius">10dp</dimen>
 </resources>
