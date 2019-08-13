@@ -3,6 +3,7 @@ package com.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,7 +16,14 @@ class MainCardAdapter : RecyclerView.Adapter<MainCardAdapter.MyMainHolder>(){
     var listCardsTab = mutableListOf<CardTab>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyMainHolder {
-        var view = LayoutInflater.from(parent.context).inflate(R.layout.card_item_main, parent, false)
+        var view = View(parent.context)
+        when(viewType){
+            TypeCardTab.MAIN_LIST_EMPTY.code ->
+                view = LayoutInflater.from(parent.context).inflate(R.layout.card_item_main, parent, false)
+            TypeCardTab.MAIN_LIST.code ->
+                view = LayoutInflater.from(parent.context).inflate(R.layout.card_container_to_fragment, parent, false)
+        }
+
 
         return MyMainHolder(view)
     }
@@ -23,12 +31,25 @@ class MainCardAdapter : RecyclerView.Adapter<MainCardAdapter.MyMainHolder>(){
     override fun getItemCount(): Int  =  listCardsTab.size
 
     override fun onBindViewHolder(holder: MyMainHolder, position: Int) {
-//        if (holder.itemViewType == TypeCardTab.MAIN_LIST_EMPTY.code)
-            bindCardListEmpty(holder)
+        val viewType = listCardsTab.get(position).typeCardTab
+        when(viewType) {
+            TypeCardTab.MAIN_LIST_EMPTY.code ->
+                bindCardListEmpty(holder)
+            TypeCardTab.MAIN_LIST.code ->
+                bindFragmentCardList(holder)
+        }
+    }
+
+    private fun bindFragmentCardList(holder: MyMainHolder) {
+
     }
 
     private fun bindCardListEmpty(holder: MyMainHolder) {
 
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return listCardsTab.get(position).typeCardTab
     }
 
 
@@ -39,6 +60,10 @@ class MainCardAdapter : RecyclerView.Adapter<MainCardAdapter.MyMainHolder>(){
         val tvTitle = view.findViewById<TextView>(R.id.tvTitle)
         val tvDescripton = view.findViewById<TextView>(R.id.tvDescription)
         val ibMainAction = view.findViewById<ImageButton>(R.id.ibMainAction)
+
+        //Fragment Card container
+        val container = view.findViewById<FrameLayout>(R.id.container)
+
 
     }
 

@@ -8,4 +8,7 @@
     <string name="new_audio_sequence">New audio Sequence</string>
     <string name="your_sequence_audio">Yours audios sequences</string>
     <string name="listen_sleepind_on_car_">Listen when be sleep or on car, etc</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
