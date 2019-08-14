@@ -32,13 +32,23 @@ dependencies {
 
 //    koin
     implementation "org.koin:koin-android:$koin_version"
+    implementation "org.koin:koin-android-architecture:$koin_arch_version"
 
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+    //Rx
+    implementation "io.reactivex.rxjava2:rxandroid:$rx_android_version"
+    implementation "io.reactivex.rxjava2:rxjava:$rx_java_version"
+
+    //Gson
+    implementation "com.google.code.gson:gson:$gson_version"
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha03'
+
 }

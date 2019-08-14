@@ -1,11 +1,12 @@
-package com.adapters
+package com.packapps.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.dto.ItemAudio
+import com.packapps.dto.ItemAudio
 import com.packapps.R
 
 class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqAdapter.MyFragHolder>() {
@@ -24,6 +25,10 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
 
         holder.tvTitle.text = item.listName
         holder.tvDescription.text = item.audioName
+        holder.ibPlay.setOnClickListener {
+            //Play
+
+        }
     }
 
     fun updateList(list: MutableList<ItemAudio>) {
@@ -37,5 +42,6 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
 
         val tvTitle = view.findViewById<TextView>(R.id.tvTitle)
         val tvDescription = view.findViewById<TextView>(R.id.tvDescription)
+        val ibPlay = view.findViewById<ImageButton>(R.id.ibPlay)
     }
 }

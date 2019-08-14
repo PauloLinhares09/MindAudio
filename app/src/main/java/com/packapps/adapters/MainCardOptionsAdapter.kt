@@ -1,4 +1,4 @@
-package com.adapters
+package com.packapps.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.dto.ItemOption
+import com.packapps.dto.ItemOption
 import com.packapps.R
 
 class MainCardOptionsAdapter : RecyclerView.Adapter<MainCardOptionsAdapter.MyOptionsHolder>(){

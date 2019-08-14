@@ -1,11 +1,10 @@
-package com.presenter
+package com.packapps.presenter
 
 import android.app.Activity
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import com.adapters.MainCardAdapter
-import com.adapters.MainCardOptionsAdapter
-import com.di.AdaptersContract
+import com.packapps.adapters.MainCardAdapter
+import com.packapps.adapters.MainCardOptionsAdapter
+import com.packapps.di.AdaptersContract
 
 class MainActivityPresenter(private val adaptersContract: AdaptersContract,
                             private val adapter : MainCardAdapter,

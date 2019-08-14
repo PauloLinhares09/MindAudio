@@ -1,4 +1,4 @@
-package com.dto
+package com.packapps.dto
 
 class CardTab (val name : String, item : Any, val typeCardTab : Int)
 

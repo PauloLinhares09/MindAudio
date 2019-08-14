@@ -1,7 +1,7 @@
-package com.application
+package com.packapps.application
 
 import android.app.Application
-import com.module.appModule
+import com.packapps.module.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -17,6 +17,8 @@ class ProjectApplication : Application(){
             androidLogger()
             androidContext(this@ProjectApplication)
             modules(appModule)
+
+
         }
     }
 
