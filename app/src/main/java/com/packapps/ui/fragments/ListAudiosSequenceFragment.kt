@@ -14,9 +14,6 @@ import com.packapps.R
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
-import org.koin.android.architecture.ext.android.getViewModel
-import org.koin.android.architecture.ext.android.viewModel
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 
@@ -27,7 +24,6 @@ class ListAudiosSequenceFragment : Fragment() {
 
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
-//    val viewModel : ListAudioSeqFragmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
