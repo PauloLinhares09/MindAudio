@@ -74,7 +74,12 @@ class ListAudiosSequenceFragment : Fragment() {
         presenter.adapter().getSubjectClick().subscribe {itemAudio ->
             context?.let {
                 itemAudioPlayingCurrent = itemAudio
-                viewModel.getAudioUni(it.packageName)
+                if (itemAudio.stateMediaPlayer == null || itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PAUSED){//action play first time
+                    viewModel.getAudioUni(it.packageName)
+                }else if (itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PLAYING){//Action pause
+                    mediaPlayerApp.pause()
+                }
+
             }
         }
 
