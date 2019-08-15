@@ -22,6 +22,7 @@ import org.koin.android.ext.android.inject
 class ListAudiosSequenceFragment : Fragment() {
 
 
+    private var itemAudioPlayingCurrent: ItemAudio? = null
     lateinit var viewModel : ListAudioSeqFragmentViewModel
     lateinit var mediaPlayerApp : MediaPlayerApp
     lateinit var mediaPlayerState : MediaPlayerApp.MediaPlayerAppState
@@ -53,10 +54,14 @@ class ListAudiosSequenceFragment : Fragment() {
             mediaPlayerApp = MediaPlayerApp()
             mediaPlayerApp.context = context!!
             //getState
-            mediaPlayerApp.getSubjectState().subscribe {
-                mediaPlayerState = it
+            mediaPlayerApp.getSubjectState().subscribe { state ->
+                mediaPlayerState = state
                 //Change state view feedback
-                LogApp.i("FRAGMENT", "Media Player state: $it")
+                LogApp.i("FRAGMENT", "Media Player state: $state")
+                itemAudioPlayingCurrent?.let {
+                    it.stateMediaPlayer = state
+                    presenter.adapter().updateJustItemOnPosition(it)
+                }
 
             }
 
@@ -65,8 +70,12 @@ class ListAudiosSequenceFragment : Fragment() {
 
         })
 
-        context?.let {
-            viewModel.getAudioUni(it.packageName)
+        //List events from card adpter
+        presenter.adapter().getSubjectClick().subscribe {itemAudio ->
+            context?.let {
+                itemAudioPlayingCurrent = itemAudio
+                viewModel.getAudioUni(it.packageName)
+            }
         }
 
         return mView
