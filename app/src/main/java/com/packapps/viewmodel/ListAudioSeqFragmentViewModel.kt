@@ -15,11 +15,11 @@ class ListAudioSeqFragmentViewModel : ViewModel() {
     lateinit var repository : RepositoryLocal
 
     //livedata
-    val pathAudioUnit = MutableLiveData<Int>()
+    val pathAudioUnit = MutableLiveData<String>()
 
-    fun getAudioUni(audioName : String){
+    fun getAudioUni(packageName : String){
         composite.add(
-            repository.getAudioUnit(audioName)
+            repository.getAudioUnit(packageName)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({audioPath ->

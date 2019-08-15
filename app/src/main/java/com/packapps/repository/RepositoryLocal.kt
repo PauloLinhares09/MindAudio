@@ -5,10 +5,10 @@ import io.reactivex.Observable
 
 class RepositoryLocal {
 
-    fun getAudioUnit(audioName : String) : Observable<Int>{
+    fun getAudioUnit(packageName : String) : Observable<String>{
 
         return Observable.create { sub ->
-            sub.onNext(R.raw.SampleAudio_0)
+            sub.onNext("android.resource://" + packageName + "/raw/file_example")
             sub.onComplete()
         }
     }

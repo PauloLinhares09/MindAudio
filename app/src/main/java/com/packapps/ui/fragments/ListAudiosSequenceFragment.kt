@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.packapps.dto.ItemAudio
 import com.packapps.R
+import com.packapps.audio_core.MediaPlayerApp
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
@@ -42,14 +43,20 @@ class ListAudiosSequenceFragment : Fragment() {
         savedInstanceState: Bundle?): View? {
         val mView = inflater.inflate(R.layout.fragment_list_audio_seq, container, false)
 
-
         bindAdapterMain(mView)
 
 
-        viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(context, "Path: $it", Toast.LENGTH_LONG).show()
+        viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer {path ->
+            Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
+            val mediaPlayerApp = MediaPlayerApp()
+            mediaPlayerApp.context = context!!
+            mediaPlayerApp.loadMedia(path)
         })
-        viewModel.getAudioUni("PauloLinhares://path")
+
+        context?.let {
+            viewModel.getAudioUni(it.packageName)
+        }
+
 
 
         return mView
