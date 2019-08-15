@@ -1,4 +1,4 @@
-package com.packapps.module
+package com.packapps
 
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.SnapHelper
