@@ -22,6 +22,7 @@ class ListAudiosSequenceFragment : Fragment() {
 
 
     lateinit var viewModel : ListAudioSeqFragmentViewModel
+    lateinit var mediaPlayerApp : MediaPlayerApp
 
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
@@ -45,10 +46,9 @@ class ListAudiosSequenceFragment : Fragment() {
 
         bindAdapterMain(mView)
 
-
         viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer {path ->
             Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
-            val mediaPlayerApp = MediaPlayerApp()
+            mediaPlayerApp = MediaPlayerApp()
             mediaPlayerApp.context = context!!
             mediaPlayerApp.loadMedia(path)
         })
@@ -57,9 +57,22 @@ class ListAudiosSequenceFragment : Fragment() {
             viewModel.getAudioUni(it.packageName)
         }
 
-
-
         return mView
+    }
+
+
+
+
+    override fun onStop() {
+        super.onStop()
+        mediaPlayerApp?.stop()
+        mediaPlayerApp?.releasePlayer()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mediaPlayerApp?.stop()
+        mediaPlayerApp?.releasePlayer()
     }
 
 

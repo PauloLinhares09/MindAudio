@@ -35,6 +35,7 @@ class MediaPlayerApp {
             //prepare
         try {
             mMediaPlayer?.prepare()
+            mMediaPlayer?.start()
         }catch (e : Exception){
             e.printStackTrace()
         }
@@ -65,9 +66,9 @@ class MediaPlayerApp {
         }
     }
 
-
-
-
+    fun stop() {
+        mMediaPlayer?.stop()
+    }
 
 
 }
