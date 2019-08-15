@@ -15,7 +15,7 @@ class ListAudioSeqFragmentViewModel : ViewModel() {
     lateinit var repository : RepositoryLocal
 
     //livedata
-    val pathAudioUnit = MutableLiveData<String>()
+    val pathAudioUnit = MutableLiveData<Int>()
 
     fun getAudioUni(audioName : String){
         composite.add(
