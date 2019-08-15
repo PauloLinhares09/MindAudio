@@ -31,10 +31,5 @@ class ListAudiosSeqFragmentPresente(private val adapter : FragmentListAudiosSeqA
     }
 
 
-    fun getAudioUnit(audioName : String) : Observable<String>{
-        return repository.getAudioUnit(audioName)
-    }
-
-
 
 }
