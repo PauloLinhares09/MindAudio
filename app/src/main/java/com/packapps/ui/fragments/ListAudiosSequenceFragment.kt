@@ -13,6 +13,7 @@ import com.packapps.dto.ItemAudio
 import com.packapps.R
 import com.packapps.audio_core.MediaPlayerApp
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
+import com.packapps.utils.LogApp
 import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
 import org.koin.android.ext.android.inject
@@ -23,6 +24,7 @@ class ListAudiosSequenceFragment : Fragment() {
 
     lateinit var viewModel : ListAudioSeqFragmentViewModel
     lateinit var mediaPlayerApp : MediaPlayerApp
+    lateinit var mediaPlayerState : MediaPlayerApp.MediaPlayerAppState
 
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
@@ -50,7 +52,17 @@ class ListAudiosSequenceFragment : Fragment() {
             Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
             mediaPlayerApp = MediaPlayerApp()
             mediaPlayerApp.context = context!!
+            //getState
+            mediaPlayerApp.getSubjectState().subscribe {
+                mediaPlayerState = it
+                //Change state view feedback
+                LogApp.i("FRAGMENT", "Media Player state: $it")
+
+            }
+
+            //Load media and play
             mediaPlayerApp.loadMedia(path)
+
         })
 
         context?.let {
