@@ -54,10 +54,27 @@
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/ic_play"
                 android:padding="@dimen/eight"
+                android:visibility="gone"
                 android:background="@drawable/button_rounded"
                 android:id="@+id/ibPlay" android:layout_marginBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="@+id/ivMain" app:layout_constraintTop_toBottomOf="@+id/ivMain"
                 app:layout_constraintEnd_toEndOf="@+id/ivMain" android:layout_marginEnd="16dp"/>
+
+        <!--Lottie loading-->
+        <FrameLayout
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:id="@+id/loading" android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ivMain" app:layout_constraintTop_toBottomOf="@+id/ivMain"
+                app:layout_constraintEnd_toEndOf="@+id/ivMain" android:layout_marginEnd="16dp">
+            <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/animation_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:lottie_rawRes="@raw/loading_button_play"
+                    app:lottie_loop="true"
+                    app:lottie_autoPlay="true" />
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>
