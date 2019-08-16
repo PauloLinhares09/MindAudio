@@ -48,9 +48,21 @@ class ListAudiosSequenceFragment : Fragment() {
         savedInstanceState: Bundle?): View? {
         val mView = inflater.inflate(R.layout.fragment_list_audio_seq, container, false)
 
+        //Bind view
         bindAdapterMain(mView)
 
-        viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer {path ->
+        //Data from Repository
+        observerDataFromRepository()
+
+        //Listen events from card adapter
+        listenClickFromAdapter()
+
+
+        return mView
+    }
+
+    private fun observerDataFromRepository() {
+        viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer { path ->
             Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
             mediaPlayerApp = MediaPlayerApp()
             mediaPlayerApp.context = context!!
@@ -70,19 +82,20 @@ class ListAudiosSequenceFragment : Fragment() {
             mediaPlayerApp.loadMedia(path)
 
         })
+    }
 
-        //List events from card adpter
-        val disposable = presenter.adapter().getSubjectClick().subscribe {itemAudio ->
+    private fun listenClickFromAdapter() {
+        val disposable = presenter.adapter().getSubjectClick().subscribe { itemAudio ->
             context?.let {
                 //Check if has other
                 itemAudioPlayingCurrent?.let {
-                    if (itemAudioPlayingCurrent?.id != itemAudio.id){
+                    if (itemAudioPlayingCurrent?.id != itemAudio.id) {
                         //clear item adapter
                         mediaPlayerApp.stop()
                         mediaPlayerApp.releasePlayer()
 
                         //Stop item current old
-                        itemAudioPlayingCurrent?.let {itemAudioOld ->
+                        itemAudioPlayingCurrent?.let { itemAudioOld ->
                             itemAudioPlayingCurrent?.stateMediaPlayer = null
                             presenter.adapter().updateJustItemOnPosition(itemAudioOld)
                         }
@@ -90,25 +103,21 @@ class ListAudiosSequenceFragment : Fragment() {
                 }
                 itemAudioPlayingCurrent = itemAudio
                 //Continue to next itemAudio for to play
-                Handler().postDelayed({ //Para dar tempo de atualizar o card anterior
+                Handler().postDelayed({
+                    //Para dar tempo de atualizar o card anterior
                     //Listen click button play/pause
-                    if (itemAudio.stateMediaPlayer == null){//action play first time
+                    if (itemAudio.stateMediaPlayer == null) {//action play first time
                         viewModel.getAudioUni(it.packageName)
-                    }else if (itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PLAYING){//Action pause
+                    } else if (itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PLAYING) {//Action pause
                         mediaPlayerApp.pause()
-                    }else if (itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PAUSED){
+                    } else if (itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PAUSED) {
                         mediaPlayerApp.play()
                     }
                 }, 500)
 
             }
         }
-
-
-        return mView
     }
-
-
 
 
     override fun onStop() {
