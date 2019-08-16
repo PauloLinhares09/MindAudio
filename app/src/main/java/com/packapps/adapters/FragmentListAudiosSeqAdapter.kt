@@ -47,6 +47,9 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
                 MediaPlayerApp.MediaPlayerAppState.BUFFERING -> {
                     holder.ibPlay.setImageResource(android.R.drawable.stat_sys_upload)
                 }
+                else ->{
+                    holder.ibPlay.setImageResource(R.drawable.ic_play)
+                }
 
             }
 

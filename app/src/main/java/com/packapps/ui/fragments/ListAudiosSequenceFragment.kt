@@ -1,6 +1,7 @@
 package com.packapps.ui.fragments
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -73,12 +74,35 @@ class ListAudiosSequenceFragment : Fragment() {
         //List events from card adpter
         presenter.adapter().getSubjectClick().subscribe {itemAudio ->
             context?.let {
-                itemAudioPlayingCurrent = itemAudio
-                if (itemAudio.stateMediaPlayer == null || itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PAUSED){//action play first time
-                    viewModel.getAudioUni(it.packageName)
-                }else if (itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PLAYING){//Action pause
-                    mediaPlayerApp.pause()
+                itemAudioPlayingCurrent?.let {
+                    if (itemAudioPlayingCurrent?.id != itemAudio.id){
+                        //clear item adapter
+                        mediaPlayerApp.stop()
+                        mediaPlayerApp.releasePlayer()
+
+                        //Stop item current old
+                        itemAudioPlayingCurrent?.let {itemAudioOld ->
+                            itemAudioPlayingCurrent?.stateMediaPlayer = null
+                            presenter.adapter().updateJustItemOnPosition(itemAudioOld)
+                        }
+
+
+
+                    }
                 }
+                itemAudioPlayingCurrent = itemAudio
+                //Continue to next itemAudio for to play
+                Handler().postDelayed({ //Para dar tempo de atualizar o card anterior
+                    //Listen click button play/pause
+                    if (itemAudio.stateMediaPlayer == null){//action play first time
+                        viewModel.getAudioUni(it.packageName)
+                    }else if (itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PLAYING){//Action pause
+                        mediaPlayerApp.pause()
+                    }else if (itemAudio.stateMediaPlayer == MediaPlayerApp.MediaPlayerAppState.PAUSED){
+                        mediaPlayerApp.play()
+                    }
+                }, 500)
+
 
             }
         }
@@ -104,9 +128,9 @@ class ListAudiosSequenceFragment : Fragment() {
 
     private fun bindAdapterMain(mView : View) {
         //create item empty
-        val itemAudio = ItemAudio("My First List", "Audio aula 1", "")
-        val itemAudio2 = ItemAudio("My First List", "Audio aula 1", "")
-        val itemAudio3 = ItemAudio("My First List", "Audio aula 1", "")
+        val itemAudio = ItemAudio(1, "My First List", "Audio aula 1", "")
+        val itemAudio2 = ItemAudio(2, "My First List", "Audio aula 1", "")
+        val itemAudio3 = ItemAudio(3, "My First List", "Audio aula 1", "")
 
         val list = mutableListOf<ItemAudio>()
         list.add(itemAudio)
