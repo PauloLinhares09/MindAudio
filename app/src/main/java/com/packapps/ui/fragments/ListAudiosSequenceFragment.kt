@@ -74,6 +74,7 @@ class ListAudiosSequenceFragment : Fragment() {
         //List events from card adpter
         val disposable = presenter.adapter().getSubjectClick().subscribe {itemAudio ->
             context?.let {
+                //Check if has other
                 itemAudioPlayingCurrent?.let {
                     if (itemAudioPlayingCurrent?.id != itemAudio.id){
                         //clear item adapter

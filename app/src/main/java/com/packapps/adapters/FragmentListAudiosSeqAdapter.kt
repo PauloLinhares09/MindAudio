@@ -3,9 +3,11 @@ package com.packapps.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.packapps.dto.ItemAudio
 import com.packapps.R
 import com.packapps.audio_core.MediaPlayerApp
@@ -31,6 +33,7 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
         holder.tvTitle.text = item.listName
         holder.tvDescription.text = item.audioName
         holder.ibPlay.setOnClickListener {
+            managerButtonPlay(holder, true)
             //Play
             subjectClick.onNext(item)
         }
@@ -40,15 +43,18 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
             when(state){
                 MediaPlayerApp.MediaPlayerAppState.PAUSED -> {
                     holder.ibPlay.setImageResource(R.drawable.ic_play)
+                    managerButtonPlay(holder, false)
                 }
                 MediaPlayerApp.MediaPlayerAppState.PLAYING -> {
                     holder.ibPlay.setImageResource(R.drawable.ic_pause)
+                    managerButtonPlay(holder, false)
                 }
                 MediaPlayerApp.MediaPlayerAppState.BUFFERING -> {
-                    holder.ibPlay.setImageResource(android.R.drawable.stat_sys_upload)
+                    managerButtonPlay(holder, true)
                 }
                 else ->{
                     holder.ibPlay.setImageResource(R.drawable.ic_play)
+                    managerButtonPlay(holder, false)
                 }
 
             }
@@ -56,8 +62,20 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
 
         }?:kotlin.run {
             holder.ibPlay.setImageResource(R.drawable.ic_play)
+            managerButtonPlay(holder, false)
         }
 
+
+    }
+
+    private fun managerButtonPlay(holder: MyFragHolder, showLoading: Boolean) {
+        if (showLoading){
+            holder.ibPlay.visibility = View.GONE
+            holder.loading.visibility = View.VISIBLE
+        }else{
+            holder.ibPlay.visibility = View.VISIBLE
+            holder.loading.visibility = View.GONE
+        }
 
     }
 
@@ -83,5 +101,6 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
         val tvTitle = view.findViewById<TextView>(R.id.tvTitle)
         val tvDescription = view.findViewById<TextView>(R.id.tvDescription)
         val ibPlay = view.findViewById<ImageButton>(R.id.ibPlay)
+        val loading = view.findViewById<FrameLayout>(R.id.loading)
     }
 }
