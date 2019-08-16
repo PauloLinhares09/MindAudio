@@ -72,7 +72,7 @@ class ListAudiosSequenceFragment : Fragment() {
         })
 
         //List events from card adpter
-        presenter.adapter().getSubjectClick().subscribe {itemAudio ->
+        val disposable = presenter.adapter().getSubjectClick().subscribe {itemAudio ->
             context?.let {
                 itemAudioPlayingCurrent?.let {
                     if (itemAudioPlayingCurrent?.id != itemAudio.id){
@@ -85,9 +85,6 @@ class ListAudiosSequenceFragment : Fragment() {
                             itemAudioPlayingCurrent?.stateMediaPlayer = null
                             presenter.adapter().updateJustItemOnPosition(itemAudioOld)
                         }
-
-
-
                     }
                 }
                 itemAudioPlayingCurrent = itemAudio
@@ -103,9 +100,9 @@ class ListAudiosSequenceFragment : Fragment() {
                     }
                 }, 500)
 
-
             }
         }
+
 
         return mView
     }
