@@ -43,7 +43,7 @@ class MediaPlayerApp {
             e.printStackTrace()
         }
 
-            //prepare
+        //prepare
         try {
             mMediaPlayer?.prepare()
             mMediaPlayer?.start()
@@ -53,9 +53,6 @@ class MediaPlayerApp {
             e.printStackTrace()
         }
 
-
-        //TODO init playback callback
-
     }
 
     fun releasePlayer(){
@@ -63,9 +60,6 @@ class MediaPlayerApp {
         mMediaPlayer = null //to GC
     }
 
-    fun callbackPlayer(){
-
-    }
 
     //Controllers Actions
     fun play(){
