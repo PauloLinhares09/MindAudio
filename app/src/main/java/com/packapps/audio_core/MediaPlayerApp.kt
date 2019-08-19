@@ -32,7 +32,6 @@ class MediaPlayerApp {
     }
 
     fun loadMedia(path : String){
-        subjectState.onNext(MediaPlayerAppState.BUFFERING)
         initializePlayer()
         //file
         val uri = Uri.parse(path)
@@ -43,15 +42,7 @@ class MediaPlayerApp {
             e.printStackTrace()
         }
 
-        //prepare
-        try {
-            mMediaPlayer?.prepare()
-            mMediaPlayer?.start()
 
-            subjectState.onNext(MediaPlayerAppState.PLAYING)
-        }catch (e : Exception){
-            e.printStackTrace()
-        }
 
     }
 
@@ -63,10 +54,15 @@ class MediaPlayerApp {
 
     //Controllers Actions
     fun play(){
-        mMediaPlayer?.let {player ->
-            player.start()
-            subjectState.onNext(MediaPlayerAppState.PLAYING)
+            //prepare
+        try {
+            mMediaPlayer?.prepare()
+            mMediaPlayer?.start()
+
+        }catch (e : Exception){
+            e.printStackTrace()
         }
+
     }
 
     fun pause(){
@@ -82,6 +78,7 @@ class MediaPlayerApp {
     }
 
     fun getSubjectState() = subjectState
+    fun currentPosition(): Long = mMediaPlayer?.currentPosition?.toLong() ?: 0
 
     //State Media Player
     enum class MediaPlayerAppState{
