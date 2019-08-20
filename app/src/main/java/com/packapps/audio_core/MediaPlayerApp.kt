@@ -38,6 +38,9 @@ class MediaPlayerApp {
         //data source
         try {
             mMediaPlayer?.setDataSource(context, uri)
+
+            mMediaPlayer?.prepare()
+
         }catch (e : Exception){
             e.printStackTrace()
         }
@@ -56,7 +59,6 @@ class MediaPlayerApp {
     fun play(){
             //prepare
         try {
-            mMediaPlayer?.prepare()
             mMediaPlayer?.start()
 
         }catch (e : Exception){
@@ -68,16 +70,15 @@ class MediaPlayerApp {
     fun pause(){
         mMediaPlayer?.let { player ->
             player.pause()
-            subjectState.onNext(MediaPlayerAppState.PAUSED)
         }
     }
 
     fun stop() {
         mMediaPlayer?.stop()
-        subjectState.onNext(MediaPlayerAppState.STOPED)
+
+        releasePlayer()
     }
 
-    fun getSubjectState() = subjectState
     fun currentPosition(): Long = mMediaPlayer?.currentPosition?.toLong() ?: 0
 
     //State Media Player
