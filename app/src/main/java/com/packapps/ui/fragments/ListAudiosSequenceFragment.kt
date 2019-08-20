@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.packapps.dto.ItemAudio
 import com.packapps.R
 import com.packapps.audio_core.MediaPlayerApp
+import com.packapps.audio_core.MediaSessionApp
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.utils.LogApp
 import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
@@ -29,20 +30,10 @@ class ListAudiosSequenceFragment : Fragment() {
 
     private var itemAudioPlayingCurrent: ItemAudio? = null
     lateinit var viewModel : ListAudioSeqFragmentViewModel
-    lateinit var mediaPlayerApp : MediaPlayerApp
-
-    lateinit var mediaSesion : MediaSessionCompat
-    lateinit var mediaSessionCallback : MediaSessionCompat.Callback
-
-    lateinit var mediaController : MediaControllerCompat
-    lateinit var mediaControllerCallback : MediaControllerCompat.Callback
-
-    lateinit var transportControllerCompat: MediaControllerCompat.TransportControls
-
-    lateinit var mBuilderState : PlaybackStateCompat.Builder
-
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
+
+    lateinit var mediaSessionApp : MediaSessionApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,96 +46,8 @@ class ListAudiosSequenceFragment : Fragment() {
         viewModel.composite = presenter.composite //Refactory it
 
 
-        //### ControllerCallback ###
-        mediaControllerCallback = object : MediaControllerCompat.Callback(){
-
-            override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-                super.onPlaybackStateChanged(state)
-
-                when(state?.state){
-                    PlaybackStateCompat.STATE_PLAYING -> {
-                        //Change button to pause
-                        LogApp.i("TAG", "STATE_PLAYING Change button to Pause")
-                        Handler().postDelayed({
-                            itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PLAYING
-                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
-                        }, 500)
-
-                    }
-                    PlaybackStateCompat.STATE_PAUSED -> {
-                        LogApp.i("TAG", "STATE_PAUSED Change button to Play")
-                        Handler().postDelayed({
-                            itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PAUSED
-                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
-                        }, 500)
-
-                    }
-                    PlaybackStateCompat.STATE_STOPPED -> {
-                        LogApp.i("TAG", "STATE_STOPPED Change button to Play")
-                            itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
-                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
-
-                    }
-                }
-
-            }
-        }
-
-        //### Media session Callback ###
-        mediaSessionCallback = object : MediaSessionCompat.Callback(){
-            override fun onPlay() {
-                super.onPlay()
-                LogApp.i("TAG", "MediaSesion.Callback onPlay")
-                mediaPlayerApp.play()
-
-                mBuilderState.setState(PlaybackStateCompat.STATE_PLAYING, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
-                mediaSesion.setPlaybackState(mBuilderState.build())
-
-
-            }
-
-            override fun onStop() {
-                super.onStop()
-                LogApp.i("TAG", "MediaSesion.Callback onStop")
-
-                mediaPlayerApp.stop()
-                mBuilderState.setState(PlaybackStateCompat.STATE_STOPPED, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
-                mediaSesion.setPlaybackState(mBuilderState.build())
-            }
-
-            override fun onPause() {
-                super.onPause()
-                LogApp.i("TAG", "MediaSesion.Callback onPause")
-
-                mediaPlayerApp.pause()
-                mBuilderState.setState(PlaybackStateCompat.STATE_PAUSED, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
-                mediaSesion.setPlaybackState(mBuilderState.build())
-
-            }
-        }
-
-        //Initialize my Builder State
-        mBuilderState = PlaybackStateCompat.Builder()
-        mBuilderState.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE)
-        mBuilderState.setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f, SystemClock.elapsedRealtime())
-
-        //Initialize MediaPlayer
-        mediaPlayerApp = MediaPlayerApp()
-        mediaPlayerApp.context = context!!
-
-
-
-        //Create my MediaSession
-        mediaSesion = MediaSessionCompat(activity!!, TAG)
-        mediaSesion.setCallback(mediaSessionCallback)
-        mediaSesion.setPlaybackState(mBuilderState.build())
-
-
-        //Create my Media Controller
-        mediaController = MediaControllerCompat(activity!!, mediaSesion)
-        mediaController.registerCallback(mediaControllerCallback)
-        transportControllerCompat = mediaController.transportControls
-
+        mediaSessionApp = MediaSessionApp(activity!!)
+        observerPublishSubjectFromMediaSessionAndMediaController()
 
     }
 
@@ -163,9 +66,6 @@ class ListAudiosSequenceFragment : Fragment() {
         listenClickFromAdapter()
 
 
-
-
-
         return mView
     }
 
@@ -173,9 +73,11 @@ class ListAudiosSequenceFragment : Fragment() {
         viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer { path ->
             Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
             //Load media and play
-            mediaPlayerApp.loadMedia(path)
+            mediaSessionApp.loadPath(path)
 
-            if (mediaController.playbackState.state == PlaybackStateCompat.STATE_PLAYING)
+            val state = mediaSessionApp.getStateFromMediaCrontroller()
+            val transportControllerCompat = mediaSessionApp.getTransportController()
+            if (state == PlaybackStateCompat.STATE_PLAYING)
                 transportControllerCompat.pause()
             else
                 transportControllerCompat.play()
@@ -194,7 +96,9 @@ class ListAudiosSequenceFragment : Fragment() {
             itemAudio.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
             presenter.adapter().updateJustItemOnPosition(itemAudio)
 
-            if (mediaController.playbackState.state == PlaybackStateCompat.STATE_PLAYING){
+            val state = mediaSessionApp.getStateFromMediaCrontroller()
+            val transportControllerCompat = mediaSessionApp.getTransportController()
+            if (state == PlaybackStateCompat.STATE_PLAYING){
 
 
                 if (itemAudio.id != itemAudioPlayingCurrent?.id ) {
@@ -225,18 +129,54 @@ class ListAudiosSequenceFragment : Fragment() {
         }
     }
 
+    /**
+     * This method updated this UI controller buttons
+     */
+    fun observerPublishSubjectFromMediaSessionAndMediaController(){
+        mediaSessionApp.getPublishSubject().subscribe {state ->
+            when(state){
+                PlaybackStateCompat.STATE_PLAYING -> {
+                    //Change button to pause
+                    LogApp.i(TAG, "STATE_PLAYING Change button to Pause")
+                    Handler().postDelayed({
+                        itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PLAYING
+                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
+                    }, 500)
+
+                }
+                PlaybackStateCompat.STATE_PAUSED -> {
+                    LogApp.i(TAG, "STATE_PAUSED Change button to Play")
+                    Handler().postDelayed({
+                        itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PAUSED
+                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
+                    }, 500)
+
+                }
+                PlaybackStateCompat.STATE_STOPPED -> {
+                    LogApp.i(TAG, "STATE_STOPPED Change button to Play")
+                    itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
+                    presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
+
+                }
+            }
+        }
+    }
+
 
     override fun onStop() {
         super.onStop()
-        mediaPlayerApp?.stop()
-        mediaPlayerApp?.releasePlayer()
+
+        mediaSessionApp.fragmentOnStop()
     }
 
     override fun onPause() {
         super.onPause()
-        mediaPlayerApp?.stop()
-        mediaPlayerApp?.releasePlayer()
+
+        mediaSessionApp.fragmentOnPause()
     }
+
+
+
 
 
     private fun bindAdapterMain(mView : View) {
