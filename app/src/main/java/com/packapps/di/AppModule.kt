@@ -5,10 +5,12 @@ import androidx.recyclerview.widget.SnapHelper
 import com.packapps.adapters.FragmentListAudiosSeqAdapter
 import com.packapps.adapters.MainCardAdapter
 import com.packapps.adapters.MainCardOptionsAdapter
+import com.packapps.audio_core.MediaSessionApp
 import com.packapps.di.AdaptersContract
 import com.packapps.di.AdaptersImpl
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.presenter.MainActivityPresenter
+import com.packapps.presenter.MediaSessionPresenter
 import com.packapps.repository.RepositoryLocal
 import io.reactivex.disposables.CompositeDisposable
 import org.koin.dsl.module
@@ -22,8 +24,10 @@ val appModule = module {
     single { MainCardOptionsAdapter() }
     single<SnapHelper> { LinearSnapHelper() }
 
-    //fragments
+    //### For fragments
     single{ FragmentListAudiosSeqAdapter() }
+    //MediaSessionAPP
+    single { MediaSessionApp() }
 
     //Repository
     single { RepositoryLocal() }
@@ -36,6 +40,7 @@ val appModule = module {
     //Factory
     factory { MainActivityPresenter(get(), get(), get(), get()) }
     factory { ListAudiosSeqFragmentPresente(get(), get(), get(), get(), get()) }
+    factory { MediaSessionPresenter(get()) }
 
 }
 

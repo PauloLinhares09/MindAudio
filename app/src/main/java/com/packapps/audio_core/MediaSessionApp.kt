@@ -12,8 +12,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 
 
-class MediaSessionApp(activity: Activity) {
+class MediaSessionApp {
 
+    private lateinit var activity: Activity
 
     private val TAG = "MediaSessionApp"
 
@@ -21,10 +22,10 @@ class MediaSessionApp(activity: Activity) {
     private lateinit var mediaSesion : MediaSessionCompat
     private var mediaSessionCallback : MediaSessionCompat.Callback
 
-    private var mediaController : MediaControllerCompat
+    private lateinit var mediaController : MediaControllerCompat
     private var mediaControllerCallback : MediaControllerCompat.Callback
 
-    private var transportControllerCompat: MediaControllerCompat.TransportControls
+    private lateinit var transportControllerCompat: MediaControllerCompat.TransportControls
 
     private lateinit var mBuilderState : PlaybackStateCompat.Builder
 
@@ -32,6 +33,10 @@ class MediaSessionApp(activity: Activity) {
 
 
     private lateinit var publishSubject : PublishSubject<Int>
+
+    fun setContext(activity: Activity){
+        this.activity = activity
+    }
 
 
     init {
@@ -104,20 +109,22 @@ class MediaSessionApp(activity: Activity) {
 
         //Initialize MediaPlayer
         mediaPlayerApp = MediaPlayerApp()
-        mediaPlayerApp.context = activity
+        Handler().postDelayed({ //This is necessary only to inject Koin //TODO Refactory it after
+            mediaPlayerApp.context = activity
+
+            //Create my MediaSession
+            mediaSesion = MediaSessionCompat(activity!!, TAG)
+            mediaSesion.setCallback(mediaSessionCallback)
+            mediaSesion.setPlaybackState(mBuilderState.build())
 
 
+            //Create my Media Controller
+            mediaController = MediaControllerCompat(activity!!, mediaSesion)
+            mediaController.registerCallback(mediaControllerCallback)
+            transportControllerCompat = mediaController.transportControls
 
-        //Create my MediaSession
-        mediaSesion = MediaSessionCompat(activity!!, TAG)
-        mediaSesion.setCallback(mediaSessionCallback)
-        mediaSesion.setPlaybackState(mBuilderState.build())
+        }, 500)
 
-
-        //Create my Media Controller
-        mediaController = MediaControllerCompat(activity!!, mediaSesion)
-        mediaController.registerCallback(mediaControllerCallback)
-        transportControllerCompat = mediaController.transportControls
     }
 
     fun loadPath(path: String) {
