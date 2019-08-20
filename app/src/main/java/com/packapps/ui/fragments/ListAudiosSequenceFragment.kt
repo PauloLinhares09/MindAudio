@@ -26,6 +26,7 @@ import org.koin.android.ext.android.inject
 
 class ListAudiosSequenceFragment : Fragment() {
 
+    private var replayAudio: Boolean = false
     private val TAG = "ListAudiosSequenceFragment"
 
     private var itemAudioPlayingCurrent: ItemAudio? = null
@@ -171,8 +172,16 @@ class ListAudiosSequenceFragment : Fragment() {
     override fun onPause() {
         super.onPause()
 
+        replayAudio = true
         mediaSessionApp.fragmentOnPause()
     }
+
+    override fun onStart() {
+        super.onStart()
+        if (replayAudio)
+        mediaSessionApp.replayAudio()
+    }
+
 
 
 
