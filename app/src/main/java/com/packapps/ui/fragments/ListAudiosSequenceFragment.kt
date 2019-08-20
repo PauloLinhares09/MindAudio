@@ -124,8 +124,6 @@ class ListAudiosSequenceFragment : Fragment() {
                 }
             }
 
-
-
         }
     }
 
@@ -133,7 +131,7 @@ class ListAudiosSequenceFragment : Fragment() {
      * This method updated this UI controller buttons
      */
     fun observerPublishSubjectFromMediaSessionAndMediaController(){
-        mediaSessionApp.getPublishSubject().subscribe {state ->
+        val subject = mediaSessionApp.getPublishSubject().subscribe {state ->
             when(state){
                 PlaybackStateCompat.STATE_PLAYING -> {
                     //Change button to pause
@@ -154,9 +152,10 @@ class ListAudiosSequenceFragment : Fragment() {
                 }
                 PlaybackStateCompat.STATE_STOPPED -> {
                     LogApp.i(TAG, "STATE_STOPPED Change button to Play")
-                    itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
-                    presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
-
+                    Handler().postDelayed({
+                        itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
+                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
+                    }, 500)
                 }
             }
         }
