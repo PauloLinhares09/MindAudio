@@ -27,12 +27,12 @@ class MediaSessionApp {
 
     private lateinit var transportControllerCompat: MediaControllerCompat.TransportControls
 
-    private lateinit var mBuilderState : PlaybackStateCompat.Builder
+    lateinit var mBuilderState : PlaybackStateCompat.Builder
 
-    private lateinit var mediaPlayerApp : MediaPlayerApp
+    lateinit var mediaPlayerApp : MediaPlayerApp
 
 
-    private lateinit var publishSubject : PublishSubject<Int>
+    internal lateinit var publishSubject : PublishSubject<Int>
 
     fun setContext(activity: Activity){
         this.activity = activity
@@ -40,7 +40,6 @@ class MediaSessionApp {
 
 
     init {
-        publishSubject = PublishSubject.create()
 
         //### ControllerCallback ###
         mediaControllerCallback = object : MediaControllerCompat.Callback(){
@@ -101,15 +100,13 @@ class MediaSessionApp {
 
             }
         }
-
-        //Initialize my Builder State
-        mBuilderState = PlaybackStateCompat.Builder()
-        mBuilderState.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE)
-        mBuilderState.setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f, SystemClock.elapsedRealtime())
-
-        //Initialize MediaPlayer
-        mediaPlayerApp = MediaPlayerApp()
         Handler().postDelayed({ //This is necessary only to inject Koin //TODO Refactory it after
+
+            //Initialize my Builder State
+            mBuilderState.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE)
+            mBuilderState.setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f, SystemClock.elapsedRealtime())
+
+            //Initialize MediaPlayer
             mediaPlayerApp.context = activity
 
             //Create my MediaSession

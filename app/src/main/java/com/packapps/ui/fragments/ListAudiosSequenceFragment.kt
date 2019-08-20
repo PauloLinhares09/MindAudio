@@ -43,8 +43,7 @@ class ListAudiosSequenceFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(ListAudioSeqFragmentViewModel::class.java)
         viewModel.repository = presenter.repository //Refactory it
-        viewModel.composite = presenter.composite //Refactory it
-
+        viewModel.composite  = presenter.composite //Refactory it
 
 
         observerPublishSubjectFromMediaSessionAndMediaController()
