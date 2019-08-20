@@ -81,10 +81,8 @@ class ListAudiosSequenceFragment : Fragment() {
                     }
                     PlaybackStateCompat.STATE_STOPPED -> {
                         LogApp.i("TAG", "STATE_STOPPED Change button to Play")
-                        Handler().postDelayed({
                             itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
-                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
-                        }, 500)
+                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
 
                     }
                 }
@@ -108,6 +106,10 @@ class ListAudiosSequenceFragment : Fragment() {
             override fun onStop() {
                 super.onStop()
                 LogApp.i("TAG", "MediaSesion.Callback onStop")
+
+                mediaPlayerApp.stop()
+                mBuilderState.setState(PlaybackStateCompat.STATE_STOPPED, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
+                mediaSesion.setPlaybackState(mBuilderState.build())
             }
 
             override fun onPause() {
@@ -173,23 +175,16 @@ class ListAudiosSequenceFragment : Fragment() {
             //Load media and play
             mediaPlayerApp.loadMedia(path)
 
-            //Delayed just to show loading
-            managerTransportControl()
+            if (mediaController.playbackState.state == PlaybackStateCompat.STATE_PLAYING)
+                transportControllerCompat.pause()
+            else
+                transportControllerCompat.play()
 
 
 
         })
     }
 
-    private fun managerTransportControl() {
-        Handler().postDelayed({
-            //Check if Player is playning
-            if (mediaController.playbackState.state == PlaybackStateCompat.STATE_PLAYING)
-                transportControllerCompat.pause()
-            else
-                transportControllerCompat.play()
-        }, 500)
-    }
 
     private fun listenClickFromAdapter() {
         val disposable = presenter.adapter().getSubjectClick().subscribe { itemAudio ->

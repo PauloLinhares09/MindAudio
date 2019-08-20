@@ -16,19 +16,9 @@ class MediaPlayerApp {
     var mMediaPlayer : MediaPlayer? = null
     lateinit var context: Context
 
-    //state
-    private val subjectState = PublishSubject.create<MediaPlayerAppState>()
-
     private fun initializePlayer(){
         releasePlayer()
         mMediaPlayer = MediaPlayer()
-        mMediaPlayer?.setOnCompletionListener {player ->
-            LogApp.i("MediaPlayer", "media player playback completed")
-            if (player.isPlaying)
-                subjectState.onNext(MediaPlayerAppState.PLAYING)
-            else
-                subjectState.onNext(MediaPlayerAppState.PAUSED)
-        }
     }
 
     fun loadMedia(path : String){

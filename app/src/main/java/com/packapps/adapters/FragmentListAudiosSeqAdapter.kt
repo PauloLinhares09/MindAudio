@@ -84,7 +84,20 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
         notifyDataSetChanged()
     }
 
-    fun updateJustItemOnPosition(itemAudio: ItemAudio){
+    fun updateJustItemOnPosition(itemAudio: ItemAudio, reset : Boolean = false){
+        if (reset){
+            for (i in 0..list.size -1){
+                if (i != itemAudio.currentPosition)
+                    list.get(i).currentStatePlayback = null
+                else
+                    list.get(i).currentStatePlayback = itemAudio.currentStatePlayback
+            }
+
+            notifyDataSetChanged()
+
+            return
+        }
+
         itemAudio.currentPosition?.let {currentPosition ->
             list.get(currentPosition).currentStatePlayback = itemAudio.currentStatePlayback
 
@@ -94,6 +107,7 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
     }
 
     fun getSubjectClick() = subjectClick
+
 
 
     class MyFragHolder(view: View) : RecyclerView.ViewHolder(view) {
