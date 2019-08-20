@@ -138,10 +138,11 @@ class MediaSessionApp(activity: Activity) {
         }
     }
 
-
-    fun getPublishSubject() = publishSubject
-    fun replayAudio() {
+    fun fragmentOnStart() {
         transportControllerCompat.play()
     }
+
+    fun getPublishSubject() = publishSubject
+
 
 }

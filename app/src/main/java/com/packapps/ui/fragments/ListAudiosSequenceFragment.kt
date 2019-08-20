@@ -2,9 +2,6 @@ package com.packapps.ui.fragments
 
 import android.os.Bundle
 import android.os.Handler
-import android.os.SystemClock
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -178,8 +175,11 @@ class ListAudiosSequenceFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (replayAudio)
-        mediaSessionApp.replayAudio()
+        if (replayAudio){
+            replayAudio = false
+            mediaSessionApp.fragmentOnStart()
+        }
+
     }
 
 
