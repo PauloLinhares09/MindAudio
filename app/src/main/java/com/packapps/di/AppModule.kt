@@ -12,7 +12,6 @@ import com.packapps.di.AdaptersContract
 import com.packapps.di.AdaptersImpl
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.presenter.MainActivityPresenter
-import com.packapps.presenter.MediaSessionPresenter
 import com.packapps.repository.RepositoryLocal
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
@@ -31,7 +30,6 @@ val appModule = module {
     single{ FragmentListAudiosSeqAdapter() }
     //MediaSessionAPP
     single { PlaybackStateCompat.Builder() }
-    single { MediaSessionApp() }
     single { MediaPlayerApp() }
     single { PublishSubject.create<Int>() }
 
@@ -46,7 +44,7 @@ val appModule = module {
     //Factory
     factory { MainActivityPresenter(get(), get(), get(), get()) }
     factory { ListAudiosSeqFragmentPresente(get(), get(), get(), get(), get()) }
-    factory { MediaSessionPresenter(get(), get(), get(), get()) }
+    factory { MediaSessionApp(get(), get(), get()) }
 
 }
 

@@ -12,7 +12,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 
 
-class MediaSessionApp {
+class MediaSessionApp(
+                      val mBuilderState : PlaybackStateCompat.Builder,
+                      val mediaPlayerApp: MediaPlayerApp,
+                      internal val publishSubject: PublishSubject<Int>) {
 
     private lateinit var activity: Activity
 
@@ -27,12 +30,6 @@ class MediaSessionApp {
 
     private lateinit var transportControllerCompat: MediaControllerCompat.TransportControls
 
-    lateinit var mBuilderState : PlaybackStateCompat.Builder
-
-    lateinit var mediaPlayerApp : MediaPlayerApp
-
-
-    internal lateinit var publishSubject : PublishSubject<Int>
 
     fun setContext(activity: Activity){
         this.activity = activity

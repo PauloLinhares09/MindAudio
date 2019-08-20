@@ -13,8 +13,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.packapps.dto.ItemAudio
 import com.packapps.R
 import com.packapps.audio_core.MediaPlayerApp
+import com.packapps.audio_core.MediaSessionApp
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
-import com.packapps.presenter.MediaSessionPresenter
 import com.packapps.utils.LogApp
 import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
@@ -31,14 +31,14 @@ class ListAudiosSequenceFragment : Fragment() {
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
 
-    val mediaSessionPresenter : MediaSessionPresenter by inject()
+    val mediaSessionApp : MediaSessionApp by inject()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.let {
             presenter.setContexActivity(it)
-            mediaSessionPresenter.mediaSessionApp.setContext(it)
+            mediaSessionApp.setContext(it)
         }
 
         viewModel = ViewModelProvider(this).get(ListAudioSeqFragmentViewModel::class.java)
@@ -72,10 +72,10 @@ class ListAudiosSequenceFragment : Fragment() {
         viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer { path ->
             Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
             //Load media and play
-            mediaSessionPresenter.mediaSessionApp.loadPath(path)
+            mediaSessionApp.loadPath(path)
 
-            val state = mediaSessionPresenter.mediaSessionApp.getStateFromMediaCrontroller()
-            val transportControllerCompat = mediaSessionPresenter.mediaSessionApp.getTransportController()
+            val state = mediaSessionApp.getStateFromMediaCrontroller()
+            val transportControllerCompat = mediaSessionApp.getTransportController()
             if (state == PlaybackStateCompat.STATE_PLAYING)
                 transportControllerCompat.pause()
             else
@@ -95,8 +95,8 @@ class ListAudiosSequenceFragment : Fragment() {
             itemAudio.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
             presenter.adapter().updateJustItemOnPosition(itemAudio)
 
-            val state = mediaSessionPresenter.mediaSessionApp.getStateFromMediaCrontroller()
-            val transportControllerCompat = mediaSessionPresenter.mediaSessionApp.getTransportController()
+            val state = mediaSessionApp.getStateFromMediaCrontroller()
+            val transportControllerCompat = mediaSessionApp.getTransportController()
             if (state == PlaybackStateCompat.STATE_PLAYING){
 
 
@@ -130,7 +130,7 @@ class ListAudiosSequenceFragment : Fragment() {
      * This method updated this UI controller buttons
      */
     fun observerPublishSubjectFromMediaSessionAndMediaController(){
-        val subject = mediaSessionPresenter.mediaSessionApp.getPublishSubject().subscribe {state ->
+        val subject = mediaSessionApp.getPublishSubject().subscribe {state ->
             when(state){
                 PlaybackStateCompat.STATE_PLAYING -> {
                     //Change button to pause
@@ -164,21 +164,21 @@ class ListAudiosSequenceFragment : Fragment() {
     override fun onStop() {
         super.onStop()
 
-        mediaSessionPresenter.mediaSessionApp.fragmentOnStop()
+        mediaSessionApp.fragmentOnStop()
     }
 
     override fun onPause() {
         super.onPause()
 
         replayAudio = true
-        mediaSessionPresenter.mediaSessionApp.fragmentOnPause()
+        mediaSessionApp.fragmentOnPause()
     }
 
     override fun onStart() {
         super.onStart()
         if (replayAudio){
             replayAudio = false
-            mediaSessionPresenter.mediaSessionApp.fragmentOnStart()
+            mediaSessionApp.fragmentOnStart()
         }
 
     }
