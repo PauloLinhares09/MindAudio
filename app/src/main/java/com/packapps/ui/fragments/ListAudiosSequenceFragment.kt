@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.packapps.dto.ItemAudio
 import com.packapps.R
 import com.packapps.audio_core.MediaPlayerApp
@@ -28,7 +27,7 @@ class ListAudiosSequenceFragment : Fragment() {
 
     private val TAG = "ListAudiosSequenceFragment"
 
-    private var itemAudioPlayingCurrent: ItemAudio? = null
+    private lateinit var itemAudioPlayingCurrent: ItemAudio
     lateinit var viewModel : ListAudioSeqFragmentViewModel
     lateinit var mediaPlayerApp : MediaPlayerApp
 
@@ -66,9 +65,13 @@ class ListAudiosSequenceFragment : Fragment() {
                     PlaybackStateCompat.STATE_PLAYING -> {
                         //Change button to pause
                         LogApp.i("TAG", "Change button to Pause")
+                        itemAudioPlayingCurrent.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PLAYING
+                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent)
                     }
                     PlaybackStateCompat.STATE_PAUSED or PlaybackStateCompat.STATE_STOPPED -> {
                         LogApp.i("TAG", "Change button to Play")
+                        itemAudioPlayingCurrent.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PAUSED
+                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent)
                     }
                 }
 
@@ -151,11 +154,15 @@ class ListAudiosSequenceFragment : Fragment() {
             //Load media and play
             mediaPlayerApp.loadMedia(path)
 
-            //Check if Player is playning
-            if (mediaController.playbackState.state == PlaybackStateCompat.STATE_PLAYING)
-                transportControllerCompat.pause()
-            else
-                transportControllerCompat.play()
+            //Delayed just to show loading
+            Handler().postDelayed({
+                //Check if Player is playning
+                if (mediaController.playbackState.state == PlaybackStateCompat.STATE_PLAYING)
+                    transportControllerCompat.pause()
+                else
+                    transportControllerCompat.play()
+            }, 1500)
+
 
 
         })
@@ -164,7 +171,12 @@ class ListAudiosSequenceFragment : Fragment() {
     private fun listenClickFromAdapter() {
         val disposable = presenter.adapter().getSubjectClick().subscribe { itemAudio ->
             LogApp.i(TAG, "button from adapter clicked")
+            itemAudioPlayingCurrent = itemAudio
             viewModel.getAudioUni(activity?.packageName?:"")
+
+            //Change state button for buffering for to show loading
+            itemAudio.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
+            presenter.adapter().updateJustItemOnPosition(itemAudio)
         }
     }
 
