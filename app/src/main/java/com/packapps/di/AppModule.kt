@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.SnapHelper
 import com.packapps.adapters.FragmentListAudiosSeqAdapter
 import com.packapps.adapters.MainCardAdapter
 import com.packapps.adapters.MainCardOptionsAdapter
+import com.packapps.audio_core.AudioFocusApp
 import com.packapps.audio_core.MediaPlayerApp
 import com.packapps.audio_core.MediaSessionApp
 import com.packapps.di.AdaptersContract
@@ -32,6 +33,7 @@ val appModule = module {
     single { PlaybackStateCompat.Builder() }
     single { MediaPlayerApp() }
     single { PublishSubject.create<Int>() }
+    single { AudioFocusApp() }
 
     //Repository
     single { RepositoryLocal() }
@@ -44,7 +46,7 @@ val appModule = module {
     //Factory
     factory { MainActivityPresenter(get(), get(), get(), get()) }
     factory { ListAudiosSeqFragmentPresente(get(), get(), get(), get(), get()) }
-    factory { MediaSessionApp(get(), get(), get()) }
+    factory { MediaSessionApp(get(), get(), get(), get()) }
 
 }
 

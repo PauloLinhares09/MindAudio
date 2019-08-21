@@ -70,6 +70,10 @@ class MediaPlayerApp {
     }
 
     fun currentPosition(): Long = mMediaPlayer?.currentPosition?.toLong() ?: 0
+    fun isPlaying(): Boolean = mMediaPlayer?.isPlaying ?: false
+    fun setVolume(mediaVolumeDefault: Float) {
+        mMediaPlayer?.setVolume(mediaVolumeDefault, mediaVolumeDefault)
+    }
 
     //State Media Player
     enum class MediaPlayerAppState{

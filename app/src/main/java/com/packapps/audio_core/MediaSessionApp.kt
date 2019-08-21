@@ -15,7 +15,8 @@ import io.reactivex.subjects.PublishSubject
 class MediaSessionApp(
                       val mBuilderState : PlaybackStateCompat.Builder,
                       val mediaPlayerApp: MediaPlayerApp,
-                      internal val publishSubject: PublishSubject<Int>) {
+                      internal val publishSubject: PublishSubject<Int>,
+                      val audioFocusApp: AudioFocusApp) {
 
     private lateinit var activity: Activity
 
@@ -70,7 +71,9 @@ class MediaSessionApp(
             override fun onPlay() {
                 super.onPlay()
                 LogApp.i("TAG", "MediaSesion.Callback onPlay")
-                mediaPlayerApp.play()
+//                mediaPlayerApp.play()
+                audioFocusApp.requesAudioFocus()
+
 
                 mBuilderState.setState(PlaybackStateCompat.STATE_PLAYING, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
                 mediaSesion.setPlaybackState(mBuilderState.build())
@@ -83,6 +86,8 @@ class MediaSessionApp(
                 LogApp.i("TAG", "MediaSesion.Callback onStop")
 
                 mediaPlayerApp.stop()
+                audioFocusApp.abandonAudioFocus()
+
                 mBuilderState.setState(PlaybackStateCompat.STATE_STOPPED, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
                 mediaSesion.setPlaybackState(mBuilderState.build())
             }
@@ -92,12 +97,17 @@ class MediaSessionApp(
                 LogApp.i("TAG", "MediaSesion.Callback onPause")
 
                 mediaPlayerApp.pause()
+
                 mBuilderState.setState(PlaybackStateCompat.STATE_PAUSED, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
                 mediaSesion.setPlaybackState(mBuilderState.build())
 
             }
         }
         Handler().postDelayed({ //This is necessary only to inject Koin //TODO Refactory it after
+
+            audioFocusApp.activity = activity
+            audioFocusApp.mediaPlayerApp = mediaPlayerApp
+
 
             //Initialize my Builder State
             mBuilderState.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE)
@@ -117,7 +127,7 @@ class MediaSessionApp(
             mediaController.registerCallback(mediaControllerCallback)
             transportControllerCompat = mediaController.transportControls
 
-        }, 500)
+        }, 400)
 
     }
 
