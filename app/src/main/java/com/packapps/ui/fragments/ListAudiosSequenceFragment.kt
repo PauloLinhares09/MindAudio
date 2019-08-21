@@ -33,8 +33,7 @@ class ListAudiosSequenceFragment : Fragment() {
     val presenter : ListAudiosSeqFragmentPresente by inject()
 
     val mediaSessionApp : MediaSessionApp by inject()
-
-    lateinit var uiControlsViewModel: UiControlsViewModel
+    private var hasStopedAndAudioFocusAbandonment: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,12 +118,14 @@ class ListAudiosSequenceFragment : Fragment() {
 
                 if (itemAudioPlayingCurrent == null){
                     itemAudioPlayingCurrent = itemAudio
-                    itemAudioPlayingCurrent = itemAudio
                     viewModel.getAudioUni(activity?.packageName ?: "")
                     return@subscribe
                 }else{
                     itemAudioPlayingCurrent = itemAudio
-                    transportControllerCompat.play()
+                    if (!hasStopedAndAudioFocusAbandonment)
+                        transportControllerCompat.play()
+                    else
+                        viewModel.getAudioUni(activity?.packageName ?: "")
                 }
             }
 
@@ -148,6 +149,7 @@ class ListAudiosSequenceFragment : Fragment() {
                     PlaybackStateCompat.STATE_PLAYING -> {
                         //Change button to pause
                         LogApp.i(TAG, "STATE_PLAYING Change button to Pause")
+                        hasStopedAndAudioFocusAbandonment = false
                         Handler().postDelayed({
                             itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PLAYING
                             presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
@@ -164,6 +166,7 @@ class ListAudiosSequenceFragment : Fragment() {
                     }
                     PlaybackStateCompat.STATE_STOPPED -> {
                         LogApp.i(TAG, "STATE_STOPPED Change button to Play")
+                        hasStopedAndAudioFocusAbandonment = true
                         Handler().postDelayed({
                             itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
                             presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
@@ -173,6 +176,9 @@ class ListAudiosSequenceFragment : Fragment() {
             })
 
         }, 650)
+
+
+
 
     }
 
