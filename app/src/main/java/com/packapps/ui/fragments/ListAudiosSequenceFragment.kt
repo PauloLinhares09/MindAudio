@@ -17,6 +17,7 @@ import com.packapps.audio_core.MediaSessionApp
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.utils.LogApp
 import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
+import com.packapps.viewmodel.UiControlsViewModel
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
 import org.koin.android.ext.android.inject
 
@@ -32,6 +33,7 @@ class ListAudiosSequenceFragment : Fragment() {
     val presenter : ListAudiosSeqFragmentPresente by inject()
 
     val mediaSessionApp : MediaSessionApp by inject()
+    private var hasStopedAndAudioFocusAbandonment: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +49,8 @@ class ListAudiosSequenceFragment : Fragment() {
 
 
         observerPublishSubjectFromMediaSessionAndMediaController()
+
+        observeUiControlsViewModel()
 
     }
 
@@ -101,7 +105,6 @@ class ListAudiosSequenceFragment : Fragment() {
 
 
                 if (itemAudio.id != itemAudioPlayingCurrent?.id ) {
-                    itemAudioPlayingCurrent = itemAudio
                     transportControllerCompat.stop()
                     itemAudioPlayingCurrent = itemAudio
                     viewModel.getAudioUni(activity?.packageName ?: "")
@@ -111,15 +114,23 @@ class ListAudiosSequenceFragment : Fragment() {
                 }
             }else {
 
-
                 if (itemAudioPlayingCurrent == null){
-                    itemAudioPlayingCurrent = itemAudio
                     itemAudioPlayingCurrent = itemAudio
                     viewModel.getAudioUni(activity?.packageName ?: "")
                     return@subscribe
                 }else{
+                    if (itemAudio.id != itemAudioPlayingCurrent?.id){
+                        transportControllerCompat.stop()
+                        itemAudioPlayingCurrent = itemAudio
+                        viewModel.getAudioUni(activity?.packageName ?: "")
+                        return@subscribe
+                    }
+
                     itemAudioPlayingCurrent = itemAudio
-                    transportControllerCompat.play()
+                    if (!hasStopedAndAudioFocusAbandonment)
+                        transportControllerCompat.play()
+                    else
+                        viewModel.getAudioUni(activity?.packageName ?: "")
                 }
             }
 
@@ -131,33 +142,49 @@ class ListAudiosSequenceFragment : Fragment() {
      */
     fun observerPublishSubjectFromMediaSessionAndMediaController(){
         val subject = mediaSessionApp.getPublishSubject().subscribe {state ->
-            when(state){
-                PlaybackStateCompat.STATE_PLAYING -> {
-                    //Change button to pause
-                    LogApp.i(TAG, "STATE_PLAYING Change button to Pause")
-                    Handler().postDelayed({
-                        itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PLAYING
-                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
-                    }, 500)
 
-                }
-                PlaybackStateCompat.STATE_PAUSED -> {
-                    LogApp.i(TAG, "STATE_PAUSED Change button to Play")
-                    Handler().postDelayed({
-                        itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PAUSED
-                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
-                    }, 500)
-
-                }
-                PlaybackStateCompat.STATE_STOPPED -> {
-                    LogApp.i(TAG, "STATE_STOPPED Change button to Play")
-                    Handler().postDelayed({
-                        itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
-                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
-                    }, 500)
-                }
-            }
         }
+    }
+
+    fun observeUiControlsViewModel(){
+        Handler().postDelayed({
+            mediaSessionApp.getUiControlViewModel().stateControls.observe(this, Observer {state->
+                LogApp.i(TAG, "mediaSessionApp.getUiControlViewModel().stateControls: $state")
+                when(state){
+                    PlaybackStateCompat.STATE_PLAYING -> {
+                        //Change button to pause
+                        LogApp.i(TAG, "STATE_PLAYING Change button to Pause")
+                        hasStopedAndAudioFocusAbandonment = false
+                        Handler().postDelayed({
+                            itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PLAYING
+                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
+                        }, 500)
+
+                    }
+                    PlaybackStateCompat.STATE_PAUSED -> {
+                        LogApp.i(TAG, "STATE_PAUSED Change button to Play")
+                        Handler().postDelayed({
+                            itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PAUSED
+                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
+                        }, 500)
+
+                    }
+                    PlaybackStateCompat.STATE_STOPPED -> {
+                        LogApp.i(TAG, "STATE_STOPPED Change button to Play")
+                        hasStopedAndAudioFocusAbandonment = true
+                        Handler().postDelayed({
+                            itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
+                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
+                        }, 500)
+                    }
+                }
+            })
+
+        }, 650)
+
+
+
+
     }
 
 
