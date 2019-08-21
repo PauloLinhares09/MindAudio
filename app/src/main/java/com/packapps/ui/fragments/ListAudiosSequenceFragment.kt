@@ -105,7 +105,6 @@ class ListAudiosSequenceFragment : Fragment() {
 
 
                 if (itemAudio.id != itemAudioPlayingCurrent?.id ) {
-                    itemAudioPlayingCurrent = itemAudio
                     transportControllerCompat.stop()
                     itemAudioPlayingCurrent = itemAudio
                     viewModel.getAudioUni(activity?.packageName ?: "")
@@ -115,12 +114,18 @@ class ListAudiosSequenceFragment : Fragment() {
                 }
             }else {
 
-
                 if (itemAudioPlayingCurrent == null){
                     itemAudioPlayingCurrent = itemAudio
                     viewModel.getAudioUni(activity?.packageName ?: "")
                     return@subscribe
                 }else{
+                    if (itemAudio.id != itemAudioPlayingCurrent?.id){
+                        transportControllerCompat.stop()
+                        itemAudioPlayingCurrent = itemAudio
+                        viewModel.getAudioUni(activity?.packageName ?: "")
+                        return@subscribe
+                    }
+
                     itemAudioPlayingCurrent = itemAudio
                     if (!hasStopedAndAudioFocusAbandonment)
                         transportControllerCompat.play()
