@@ -7,7 +7,6 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.airbnb.lottie.LottieAnimationView
 import com.packapps.dto.ItemAudio
 import com.packapps.R
 import com.packapps.audio_core.MediaPlayerApp
@@ -38,7 +37,7 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
             subjectClick.onNext(item)
         }
 
-        item.stateMediaPlayer?.let { state ->
+        item.currentStatePlayback?.let { state ->
 
             when(state){
                 MediaPlayerApp.MediaPlayerAppState.PAUSED -> {
@@ -85,15 +84,30 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
         notifyDataSetChanged()
     }
 
-    fun updateJustItemOnPosition(itemAudio: ItemAudio){
+    fun updateJustItemOnPosition(itemAudio: ItemAudio, reset : Boolean = false){
+        if (reset){
+            for (i in 0..list.size -1){
+                if (i != itemAudio.currentPosition)
+                    list.get(i).currentStatePlayback = null
+                else
+                    list.get(i).currentStatePlayback = itemAudio.currentStatePlayback
+            }
+
+            notifyDataSetChanged()
+
+            return
+        }
+
         itemAudio.currentPosition?.let {currentPosition ->
-            list.get(currentPosition).stateMediaPlayer = itemAudio.stateMediaPlayer
+            list.get(currentPosition).currentStatePlayback = itemAudio.currentStatePlayback
 
             notifyItemChanged(currentPosition)
         }
+
     }
 
     fun getSubjectClick() = subjectClick
+
 
 
     class MyFragHolder(view: View) : RecyclerView.ViewHolder(view) {
