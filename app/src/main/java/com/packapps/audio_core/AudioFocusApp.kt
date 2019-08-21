@@ -7,9 +7,18 @@ import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
+import android.support.v4.media.session.PlaybackStateCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import com.packapps.utils.LogApp
+import com.packapps.viewmodel.UiControlsViewModel
 
-class AudioFocusApp {
+class AudioFocusApp : ViewModelStoreOwner {
+    override fun getViewModelStore(): ViewModelStore {
+        return ViewModelStore()
+    }
+
     private val TAG = "AudioFocusApp"
 
     private val MEDIA_VOLUME_DEFAULT = 1.0f
@@ -22,10 +31,13 @@ class AudioFocusApp {
     lateinit var audioManager : AudioManager
     lateinit var audioFocusRequest: AudioFocusRequest
 
+    lateinit var uiControlsViewModel: UiControlsViewModel
+
 
     init {
         Handler().postDelayed({
             audioManager = activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            uiControlsViewModel = ViewModelProvider(this).get(UiControlsViewModel::class.java)
 
             val audioAttributes = AudioAttributes.Builder().run {
                 setUsage(AudioAttributes.USAGE_GAME)
@@ -55,6 +67,7 @@ class AudioFocusApp {
 
                     if (mAudioFocusIsGranted && !isPlaying()){
                         mediaPlayerApp.play()
+                        uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_PLAYING)
                     } else if (isPlaying()){
                         setVolume(MEDIA_VOLUME_DEFAULT)
                     }
@@ -67,6 +80,7 @@ class AudioFocusApp {
                     if (isPlaying()){
                         mAudioFocusIsGranted = true
                         mediaPlayerApp.pause()
+                        uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_PAUSED)
                     }
 
                 }
@@ -80,6 +94,7 @@ class AudioFocusApp {
                     abandonAudioFocus()
                     mAudioFocusIsGranted = false
                     mediaPlayerApp.stop()
+                    uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_STOPPED)
 
                 }
 
@@ -109,6 +124,7 @@ class AudioFocusApp {
                     LogApp.i(TAG, "AUDIOFOCUS_REQUEST_GRANTED")
                     //start playback
                     mediaPlayerApp.play()
+                    uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_PLAYING)
                 }
             }
         }

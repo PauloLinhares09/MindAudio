@@ -17,6 +17,7 @@ import com.packapps.audio_core.MediaSessionApp
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.utils.LogApp
 import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
+import com.packapps.viewmodel.UiControlsViewModel
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
 import org.koin.android.ext.android.inject
 
@@ -33,6 +34,8 @@ class ListAudiosSequenceFragment : Fragment() {
 
     val mediaSessionApp : MediaSessionApp by inject()
 
+    lateinit var uiControlsViewModel: UiControlsViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,8 @@ class ListAudiosSequenceFragment : Fragment() {
 
 
         observerPublishSubjectFromMediaSessionAndMediaController()
+
+        observeUiControlsViewModel()
 
     }
 
@@ -131,33 +136,44 @@ class ListAudiosSequenceFragment : Fragment() {
      */
     fun observerPublishSubjectFromMediaSessionAndMediaController(){
         val subject = mediaSessionApp.getPublishSubject().subscribe {state ->
-            when(state){
-                PlaybackStateCompat.STATE_PLAYING -> {
-                    //Change button to pause
-                    LogApp.i(TAG, "STATE_PLAYING Change button to Pause")
-                    Handler().postDelayed({
-                        itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PLAYING
-                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
-                    }, 500)
 
-                }
-                PlaybackStateCompat.STATE_PAUSED -> {
-                    LogApp.i(TAG, "STATE_PAUSED Change button to Play")
-                    Handler().postDelayed({
-                        itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PAUSED
-                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
-                    }, 500)
-
-                }
-                PlaybackStateCompat.STATE_STOPPED -> {
-                    LogApp.i(TAG, "STATE_STOPPED Change button to Play")
-                    Handler().postDelayed({
-                        itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
-                        presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
-                    }, 500)
-                }
-            }
         }
+    }
+
+    fun observeUiControlsViewModel(){
+        Handler().postDelayed({
+            mediaSessionApp.getUiControlViewModel().stateControls.observe(this, Observer {state->
+                LogApp.i(TAG, "mediaSessionApp.getUiControlViewModel().stateControls: $state")
+                when(state){
+                    PlaybackStateCompat.STATE_PLAYING -> {
+                        //Change button to pause
+                        LogApp.i(TAG, "STATE_PLAYING Change button to Pause")
+                        Handler().postDelayed({
+                            itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PLAYING
+                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
+                        }, 500)
+
+                    }
+                    PlaybackStateCompat.STATE_PAUSED -> {
+                        LogApp.i(TAG, "STATE_PAUSED Change button to Play")
+                        Handler().postDelayed({
+                            itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.PAUSED
+                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!)
+                        }, 500)
+
+                    }
+                    PlaybackStateCompat.STATE_STOPPED -> {
+                        LogApp.i(TAG, "STATE_STOPPED Change button to Play")
+                        Handler().postDelayed({
+                            itemAudioPlayingCurrent?.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.STOPED
+                            presenter.adapter().updateJustItemOnPosition(itemAudioPlayingCurrent!!, true)
+                        }, 500)
+                    }
+                }
+            })
+
+        }, 650)
+
     }
 
 

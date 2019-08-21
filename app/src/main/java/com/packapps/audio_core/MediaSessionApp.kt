@@ -50,16 +50,19 @@ class MediaSessionApp(
                         //Change button to pause
                         LogApp.i(TAG, "STATE_PLAYING Change button to Pause")
                         publishSubject.onNext(state.state)
+                        audioFocusApp.uiControlsViewModel.stateControls.postValue(state?.state)
 
                     }
                     PlaybackStateCompat.STATE_PAUSED -> {
                         LogApp.i(TAG, "STATE_PAUSED Change button to Play")
                         publishSubject.onNext(state.state)
+                        audioFocusApp.uiControlsViewModel.stateControls.postValue(state?.state)
 
                     }
                     PlaybackStateCompat.STATE_STOPPED -> {
                         LogApp.i(TAG, "STATE_STOPPED Change button to Play")
                         publishSubject.onNext(state.state)
+                        audioFocusApp.uiControlsViewModel.stateControls.postValue(state?.state)
                     }
                 }
 
@@ -154,6 +157,9 @@ class MediaSessionApp(
     }
 
     fun getPublishSubject() = publishSubject
+
+    fun getUiControlViewModel() = audioFocusApp.uiControlsViewModel
+
 
 
 }
