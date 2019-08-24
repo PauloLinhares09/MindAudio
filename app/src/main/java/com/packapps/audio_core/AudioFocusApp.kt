@@ -1,6 +1,5 @@
 package com.packapps.audio_core
 
-import android.app.Activity
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
@@ -14,7 +13,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import com.packapps.utils.LogApp
 import com.packapps.viewmodel.UiControlsViewModel
 
-class AudioFocusApp : ViewModelStoreOwner {
+class AudioFocusApp(androidContext: Context) : ViewModelStoreOwner {
     override fun getViewModelStore(): ViewModelStore {
         return ViewModelStore()
     }
@@ -25,7 +24,6 @@ class AudioFocusApp : ViewModelStoreOwner {
     private val MEDIA_VOLUME_DUCK = 0.2f
 
     private var mAudioFocusIsGranted: Boolean = false
-    lateinit var activity : Activity
     lateinit var mediaPlayerApp: MediaPlayerApp
 
     lateinit var audioManager : AudioManager
@@ -35,72 +33,73 @@ class AudioFocusApp : ViewModelStoreOwner {
 
 
     init {
-        Handler().postDelayed({
-            audioManager = activity.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            uiControlsViewModel = ViewModelProvider(this).get(UiControlsViewModel::class.java)
+        val audioFocusChangeListener = object : AudioManager.OnAudioFocusChangeListener{
+            override fun onAudioFocusChange(focusState: Int) {
 
-            val audioAttributes = AudioAttributes.Builder().run {
-                setUsage(AudioAttributes.USAGE_GAME)
-                setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                build() }
+                when(focusState){
+                    AudioManager.AUDIOFOCUS_GAIN -> {
+                        LogApp.i(TAG, "AUDIOFOCUS_GAIN")
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
-                    setAudioAttributes(audioAttributes)
-                    setAcceptsDelayedFocusGain(true)
-                    setOnAudioFocusChangeListener(audioFocusChangeListener, Handler())
+                        if (mAudioFocusIsGranted && !isPlaying()){
+                            mediaPlayerApp.play()
+                            uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_PLAYING)
+                        } else if (isPlaying()){
+                            setVolume(MEDIA_VOLUME_DEFAULT)
+                        }
+                        mAudioFocusIsGranted = false
 
-
-                    build()
-                }
-            }
-
-        }, 600)
-    }
-
-    private val audioFocusChangeListener = object : AudioManager.OnAudioFocusChangeListener{
-        override fun onAudioFocusChange(focusState: Int) {
-
-            when(focusState){
-                AudioManager.AUDIOFOCUS_GAIN -> {
-                    LogApp.i(TAG, "AUDIOFOCUS_GAIN")
-
-                    if (mAudioFocusIsGranted && !isPlaying()){
-                        mediaPlayerApp.play()
-                        uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_PLAYING)
-                    } else if (isPlaying()){
-                        setVolume(MEDIA_VOLUME_DEFAULT)
                     }
-                    mAudioFocusIsGranted = false
+                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                        LogApp.i(TAG, "AUDIOFOCUS_LOSS_TRANSIENT")
 
-                }
-                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                    LogApp.i(TAG, "AUDIOFOCUS_LOSS_TRANSIENT")
+                        if (isPlaying()){
+                            mAudioFocusIsGranted = true
+                            mediaPlayerApp.pause()
+                            uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_PAUSED)
+                        }
 
-                    if (isPlaying()){
-                        mAudioFocusIsGranted = true
-                        mediaPlayerApp.pause()
-                        uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_PAUSED)
+                    }
+                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                        LogApp.i(TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK")
+                        setVolume(MEDIA_VOLUME_DUCK)
+
+                    }
+                    AudioManager.AUDIOFOCUS_LOSS -> {
+                        LogApp.i(TAG, "AUDIOFOCUS_LOSS")
+                        abandonAudioFocus()
+                        mAudioFocusIsGranted = false
+                        mediaPlayerApp.stop()
+                        uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_STOPPED)
+
                     }
 
                 }
-                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                    LogApp.i(TAG, "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK")
-                    setVolume(MEDIA_VOLUME_DUCK)
-
-                }
-                AudioManager.AUDIOFOCUS_LOSS -> {
-                    LogApp.i(TAG, "AUDIOFOCUS_LOSS")
-                    abandonAudioFocus()
-                    mAudioFocusIsGranted = false
-                    mediaPlayerApp.stop()
-                    uiControlsViewModel.stateControls.postValue(PlaybackStateCompat.STATE_STOPPED)
-
-                }
-
             }
         }
+
+
+        audioManager = androidContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        uiControlsViewModel = ViewModelProvider(this).get(UiControlsViewModel::class.java)
+
+        val audioAttributes = AudioAttributes.Builder().run {
+            setUsage(AudioAttributes.USAGE_GAME)
+            setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            build() }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
+                setAudioAttributes(audioAttributes)
+                setAcceptsDelayedFocusGain(true)
+                setOnAudioFocusChangeListener(audioFocusChangeListener, Handler())
+
+
+                build()
+            }
+        }
+
     }
+
+
 
     private fun setVolume(mediaVolumeDefault: Float) {
         mediaPlayerApp.setVolume(mediaVolumeDefault)

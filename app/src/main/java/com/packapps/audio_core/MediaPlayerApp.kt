@@ -1,20 +1,14 @@
 package com.packapps.audio_core
 
 import android.content.Context
-import android.content.res.AssetFileDescriptor
 import android.media.MediaPlayer
 import android.net.Uri
-import com.packapps.R
-import com.packapps.utils.LogApp
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 import java.lang.Exception
 
-class MediaPlayerApp {
+class MediaPlayerApp(val androidContext: Context) {
 
 
     var mMediaPlayer : MediaPlayer? = null
-    lateinit var context: Context
 
     private fun initializePlayer(){
         releasePlayer()
@@ -27,7 +21,7 @@ class MediaPlayerApp {
         val uri = Uri.parse(path)
         //data source
         try {
-            mMediaPlayer?.setDataSource(context, uri)
+            mMediaPlayer?.setDataSource(androidContext, uri)
 
             mMediaPlayer?.prepare()
 

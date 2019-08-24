@@ -6,9 +6,7 @@ import androidx.recyclerview.widget.SnapHelper
 import com.packapps.adapters.FragmentListAudiosSeqAdapter
 import com.packapps.adapters.MainCardAdapter
 import com.packapps.adapters.MainCardOptionsAdapter
-import com.packapps.audio_core.AudioFocusApp
-import com.packapps.audio_core.MediaPlayerApp
-import com.packapps.audio_core.MediaSessionApp
+import com.packapps.audio_core.*
 import com.packapps.di.AdaptersContract
 import com.packapps.di.AdaptersImpl
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
@@ -18,7 +16,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import org.koin.dsl.module
 
-import org.koin.android.architecture.ext.android.viewModel
+import org.koin.android.ext.koin.androidContext
 
 val appModule = module {
     //Single instance from repository
@@ -31,9 +29,9 @@ val appModule = module {
     single{ FragmentListAudiosSeqAdapter() }
     //MediaSessionAPP
     single { PlaybackStateCompat.Builder() }
-    single { MediaPlayerApp() }
+    single { MediaPlayerApp(androidContext()) }
     single { PublishSubject.create<Int>() }
-    single { AudioFocusApp() }
+    single { AudioFocusApp(androidContext()) }
 
     //Repository
     single { RepositoryLocal() }
@@ -46,7 +44,9 @@ val appModule = module {
     //Factory
     factory { MainActivityPresenter(get(), get(), get(), get()) }
     factory { ListAudiosSeqFragmentPresente(get(), get(), get(), get(), get()) }
-    factory { MediaSessionApp(get(), get(), get(), get()) }
+    factory { MediaSessionApp(androidContext() , get(), get(), get()) }
+    factory { MediaBrowserApp(androidContext(), get(), get()) }
+
 
 }
 
