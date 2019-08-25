@@ -34,6 +34,8 @@ class MediaSessionApp(androidContext : Context,
             override fun onPlay() {
                 super.onPlay()
                 LogApp.i("TAG", "MediaSesion.Callback onPlay")
+                mediaSesion.isActive = true
+
                 getUiControlViewModel().stateControls.postValue(PlaybackStateCompat.STATE_PLAYING)
 //                mediaPlayerApp.play()
                 audioFocusApp.requesAudioFocus()
@@ -45,6 +47,8 @@ class MediaSessionApp(androidContext : Context,
 
 
                 notificaManagerApp.moveServiceToStatedState(getPlaybackState(), metaDataCompat)
+
+
 
 
             }
@@ -61,6 +65,8 @@ class MediaSessionApp(androidContext : Context,
                 mediaSesion.setPlaybackState(mBuilderState.build())
 
                 notificaManagerApp.moveServiceOutOfStartedState(getPlaybackState())
+
+                mediaSesion.isActive = false
 
             }
 
