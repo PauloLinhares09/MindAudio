@@ -1,22 +1,18 @@
 package com.packapps.audio_core
 
-import android.app.Activity
 import android.content.Context
-import android.media.session.MediaController
-import android.os.Handler
 import android.os.SystemClock
-import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.packapps.utils.LogApp
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
 
 
 class MediaSessionApp(androidContext : Context,
                       val mBuilderState : PlaybackStateCompat.Builder,
                       val mediaPlayerApp: MediaPlayerApp,
-                      val audioFocusApp: AudioFocusApp) {
+                      val audioFocusApp: AudioFocusApp,
+                      val notificaManagerApp : NotificationManagerApp
+                      ) {
 
 
     private val TAG = "MediaSessionApp"
@@ -28,6 +24,10 @@ class MediaSessionApp(androidContext : Context,
 
 
     init {
+        notificaManagerApp.mediaSessionApp = this
+
+        val metaDataCompat = MusicLibraryUtil.getMetadata(androidContext, MusicLibraryUtil.idMock())
+
 
         //### Media session Callback ###
         mediaSessionCallback = object : MediaSessionCompat.Callback(){
@@ -43,6 +43,10 @@ class MediaSessionApp(androidContext : Context,
                 mediaSesion.setPlaybackState(mBuilderState.build())
 
 
+
+                notificaManagerApp.moveServiceToStatedState(getPlaybackState(), metaDataCompat)
+
+
             }
 
             override fun onStop() {
@@ -55,6 +59,9 @@ class MediaSessionApp(androidContext : Context,
 
                 mBuilderState.setState(PlaybackStateCompat.STATE_STOPPED, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
                 mediaSesion.setPlaybackState(mBuilderState.build())
+
+                notificaManagerApp.moveServiceOutOfStartedState(getPlaybackState())
+
             }
 
             override fun onPause() {
@@ -66,6 +73,8 @@ class MediaSessionApp(androidContext : Context,
 
                 mBuilderState.setState(PlaybackStateCompat.STATE_PAUSED, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
                 mediaSesion.setPlaybackState(mBuilderState.build())
+
+                notificaManagerApp.updateNotificationControllerToPause(getPlaybackState(), metaDataCompat)
 
             }
         }
@@ -104,6 +113,9 @@ class MediaSessionApp(androidContext : Context,
         mediaSesion.release()
 
     }
+
+    fun getPlaybackState(): PlaybackStateCompat = mediaSesion.controller.playbackState
+
 
 
 }

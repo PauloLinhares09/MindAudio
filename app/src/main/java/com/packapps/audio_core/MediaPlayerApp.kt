@@ -70,9 +70,6 @@ class MediaPlayerApp(val androidContext: Context) {
         mMediaPlayer?.setVolume(mediaVolumeDefault, mediaVolumeDefault)
     }
 
-    fun currentMedia(): MediaMetadataCompat? {
-        return null
-    }
 
     //State Media Player
     enum class MediaPlayerAppState{

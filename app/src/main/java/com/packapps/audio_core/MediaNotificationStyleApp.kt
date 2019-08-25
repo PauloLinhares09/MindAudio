@@ -85,19 +85,19 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
     }
 
 
-    fun getNotification(playbackStateCompat: PlaybackStateCompat, metadataCompat: MediaMetadataCompat, mediasessionToken : MediaSessionCompat.Token): Notification {
+    fun getNotification(playbackStateCompat: PlaybackStateCompat, metadataCompat: MediaMetadataCompat?, mediasessionToken : MediaSessionCompat.Token): Notification {
 
         val isPlaying = playbackStateCompat.state == PlaybackStateCompat.STATE_PLAYING
-        val metaDescriptionCompat = metadataCompat.description
+        val metaDescriptionCompat = metadataCompat?.description
 
-        val notificationBuilder = buildNotification(playbackStateCompat, mediasessionToken, isPlaying, metaDescriptionCompat)
+        val notificationBuilder = buildNotification(playbackStateCompat, isPlaying, metaDescriptionCompat)
 
         return notificationBuilder.build()
     }
 
-    private fun buildNotification(playbackStateCompat: PlaybackStateCompat, mediasessionToken: MediaSessionCompat.Token,
+    private fun buildNotification(playbackStateCompat: PlaybackStateCompat,
                                         isPlaying: Boolean,
-                                        metaDescriptionCompat: MediaDescriptionCompat
+                                        metaDescriptionCompat: MediaDescriptionCompat?
                                                                                     ): NotificationCompat.Builder {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             channelId = mCreateChannelId()

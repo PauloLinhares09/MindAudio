@@ -49,7 +49,6 @@ class ListAudiosSequenceFragment : Fragment() {
         super.onCreate(savedInstanceState)
         activity?.let {
             presenter.setContexActivity(it)
-            mediaBrowserApp.activity = it
         }
 
         viewModel = ViewModelProvider(this).get(ListAudioSeqFragmentViewModel::class.java)

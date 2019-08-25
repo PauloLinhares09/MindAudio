@@ -18,8 +18,6 @@ class MediaBrowserApp(
 
     val TAG = "MediaBrowserApp"
 
-    lateinit var activity: Activity
-
     private lateinit var mediaController : MediaControllerCompat
 
 

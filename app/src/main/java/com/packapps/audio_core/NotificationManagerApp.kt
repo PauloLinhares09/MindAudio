@@ -1,8 +1,10 @@
 package com.packapps.audio_core
 
 import android.app.Notification
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -11,28 +13,31 @@ import io.reactivex.subjects.PublishSubject
 
 class NotificationManagerApp(
         val androidContext: Context,
-        mediaSessionApp: MediaSessionApp,
-        val mediaPlayerApp: MediaPlayerApp,
-        val subject: PublishSubject<Int>
+        val subject: PublishSubject<Triple<Boolean, Notification, Boolean>>
     ){
 
-    var mediaNotificationStyleApp : MediaNotificationStyleApp
+    lateinit var mediaSessionApp: MediaSessionApp
+
+    lateinit var mediaNotificationStyleApp : MediaNotificationStyleApp
 
     init {
-        mediaNotificationStyleApp = MediaNotificationStyleApp(androidContext, mediaSessionApp)
+        Handler().postDelayed({
+            mediaNotificationStyleApp = MediaNotificationStyleApp(androidContext, mediaSessionApp)
+        }, 300)
+
     }
 
 
 
         private var mServiceBrowserIsStarted: Boolean = false
 
-        fun moveServiceToStatedState(playbackStateCompat: PlaybackStateCompat) {
+        fun moveServiceToStatedState(
+            playbackStateCompat: PlaybackStateCompat,
+            metaDataCompat: MediaMetadataCompat
+        ) {
             val sessionToken = mediaNotificationStyleApp.mediaSessionApp.getSessionToken()
 
-            val notification = mediaNotificationStyleApp.getNotification(
-                playbackStateCompat,
-                mediaPlayerApp.currentMedia()!!, sessionToken
-            )
+            val notification = mediaNotificationStyleApp.getNotification(playbackStateCompat, metaDataCompat, sessionToken)
 
             if (mServiceBrowserIsStarted) {
                 ContextCompat.startForegroundService(
@@ -44,28 +49,38 @@ class NotificationManagerApp(
             }
 
 
-//            subject.onNext(Triple(true, notification, false))
+            subject.onNext(Triple(true, notification, false))
         }
 
 
-        fun updateNotificationControllerToPause(playbackStateCompat: PlaybackStateCompat){
+        fun updateNotificationControllerToPause(playbackStateCompat: PlaybackStateCompat, metaDataCompat: MediaMetadataCompat){
             val sessionToken = mediaNotificationStyleApp.mediaSessionApp.getSessionToken()
             val notification = mediaNotificationStyleApp.getNotification(
                 playbackStateCompat,
-                mediaPlayerApp.currentMedia()!!, sessionToken)
+                metaDataCompat, sessionToken)
+
+            subject.onNext(Triple(false, notification, false))
 
         }
 
-        fun moveServiceOutOfStartedState(state: PlaybackStateCompat) {
+        fun moveServiceOutOfStartedState(
+            state: PlaybackStateCompat
+        ) {
             mServiceBrowserIsStarted = false
+
+            subject.onNext(Triple(false, Notification(), true))
         }
 
     fun getNotification(
         playbackState: PlaybackStateCompat,
-        metadata: MediaMetadataCompat,
+        metadata: MediaMetadataCompat?,
         sessionToken: MediaSessionCompat.Token
     ): Notification? {
         return mediaNotificationStyleApp.getNotification(playbackState, metadata, sessionToken)
+    }
+
+    fun getNotificationManager(): NotificationManager {
+        return mediaNotificationStyleApp.notificationManager
     }
 
 }

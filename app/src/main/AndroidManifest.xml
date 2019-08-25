@@ -5,6 +5,8 @@
 
     <dist:module dist:instant="true"/>
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
     <application
             android:name="com.packapps.ProjectApplication"
             android:allowBackup="true"
