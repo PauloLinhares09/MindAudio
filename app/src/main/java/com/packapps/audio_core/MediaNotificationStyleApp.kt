@@ -28,10 +28,7 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
 //    private val description = mediaMetaData.description
 
     private val REQUEST_CODE: Int = 109
-    private val CHANNEL_ID = "com.packapps.mindaudio.channelnotification"
-
-    lateinit var mNotificationBuilder : NotificationCompat.Builder
-    lateinit var channelId : String
+    private var CHANNEL_ID = "com.packapps.mindaudio.channelnotification"
 
     var notificationManager: NotificationManager
 
@@ -85,10 +82,10 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
     }
 
 
-    fun getNotification(playbackStateCompat: PlaybackStateCompat, metadataCompat: MediaMetadataCompat?, mediasessionToken : MediaSessionCompat.Token): Notification {
+    fun getNotification(playbackStateCompat: PlaybackStateCompat, metadataCompat: MediaMetadataCompat): Notification {
 
         val isPlaying = playbackStateCompat.state == PlaybackStateCompat.STATE_PLAYING
-        val metaDescriptionCompat = metadataCompat?.description
+        val metaDescriptionCompat = metadataCompat.description
 
         val notificationBuilder = buildNotification(playbackStateCompat, isPlaying, metaDescriptionCompat)
 
@@ -100,10 +97,10 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
                                         metaDescriptionCompat: MediaDescriptionCompat?
                                                                                     ): NotificationCompat.Builder {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channelId = mCreateChannelId()
+            CHANNEL_ID = mCreateChannelId()
         }
 
-        mNotificationBuilder = NotificationCompat.Builder(androidContext, channelId).apply {
+        val mNotificationBuilder = NotificationCompat.Builder(androidContext, CHANNEL_ID).apply {
             //Take Advantage media Style
             setStyle(androidx.media.app.NotificationCompat.MediaStyle()
                 .setMediaSession(mediaSessionApp.getSessionToken())

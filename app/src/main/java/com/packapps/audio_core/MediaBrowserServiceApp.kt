@@ -32,7 +32,11 @@ class MediaBrowserServiceApp : MediaBrowserServiceCompat() {
 
         Handler().postDelayed({
             setSessionToken(mediaSessionApp.getSessionToken())
+
+
+            notificationManagerApp = mediaSessionApp.notificaManagerApp
         }, 800)
+
 
 
         //Create Notification Builder foregrownd
@@ -58,7 +62,7 @@ class MediaBrowserServiceApp : MediaBrowserServiceCompat() {
 
         }
 
-        notificationManagerApp = mediaSessionApp.notificaManagerApp
+
 
 
     }
