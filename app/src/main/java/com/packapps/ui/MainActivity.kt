@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     val presenter : MainActivityPresenter by inject()
 
+    var stateEnd = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -28,6 +30,17 @@ class MainActivity : AppCompatActivity() {
 
 //        bindAdapterMain()
         bindAdapterMainOptions()
+
+
+        card.setOnClickListener {
+            if (!stateEnd) {
+                motion.transitionToEnd()
+                stateEnd = true
+            }else{
+                motion.transitionToStart()
+                stateEnd = false
+            }
+        }
 
 
 
