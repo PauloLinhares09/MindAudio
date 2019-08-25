@@ -7,12 +7,9 @@ import android.view.MenuItem
 import com.packapps.dto.ItemOption
 import com.packapps.R
 import com.packapps.presenter.MainActivityPresenter
-import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import org.koin.android.architecture.ext.android.viewModel
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {
@@ -33,19 +30,22 @@ class MainActivity : AppCompatActivity() {
 
 
         card.setOnClickListener {
-            if (!stateEnd) {
-                motion.transitionToEnd()
-                stateEnd = true
-            }else{
-                motion.transitionToStart()
-                stateEnd = false
-            }
+            managerAnimationScene()
         }
 
 
 
     }
 
+    private fun managerAnimationScene() {
+        if (!stateEnd) {
+            motion.transitionToEnd()
+            stateEnd = true
+        } else {
+            motion.transitionToStart()
+            stateEnd = false
+        }
+    }
 
 
 //    private fun bindAdapterMain() {
@@ -101,5 +101,9 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun animateContainerMain() {
+        managerAnimationScene()
     }
 }

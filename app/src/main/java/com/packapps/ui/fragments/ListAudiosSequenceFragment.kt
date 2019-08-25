@@ -15,6 +15,7 @@ import com.packapps.R
 import com.packapps.audio_core.MediaPlayerApp
 import com.packapps.audio_core.MediaSessionApp
 import com.packapps.presenter.ListAudiosSeqFragmentPresente
+import com.packapps.ui.MainActivity
 import com.packapps.utils.LogApp
 import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
 import com.packapps.viewmodel.UiControlsViewModel
@@ -24,6 +25,7 @@ import org.koin.android.ext.android.inject
 
 class ListAudiosSequenceFragment : Fragment() {
 
+    private var motionEnd: Boolean = false
     private var replayAudio: Boolean = false
     private val TAG = "ListAudiosSequenceFragment"
 
@@ -47,9 +49,6 @@ class ListAudiosSequenceFragment : Fragment() {
         viewModel.repository = presenter.repository //Refactory it
         viewModel.composite  = presenter.composite //Refactory it
 
-
-        observerPublishSubjectFromMediaSessionAndMediaController()
-
         observeUiControlsViewModel()
 
     }
@@ -68,8 +67,24 @@ class ListAudiosSequenceFragment : Fragment() {
         //Listen events from card adapter
         listenClickFromAdapter()
 
+        managerMotionSceneFragment(mView)
 
         return mView
+    }
+
+    private fun managerMotionSceneFragment(mView: View) {
+        val s = presenter.adapter().getSubjectClickItem().subscribe { itemAudio ->
+            //Show detail card detail
+            (activity as MainActivity).animateContainerMain()
+            //Animation card from adapter
+            if (!motionEnd) {
+                mView.fragmentContainer.transitionToEnd()
+                motionEnd = true
+            } else {
+                mView.fragmentContainer.transitionToStart()
+                motionEnd = false
+            }
+        }
     }
 
     private fun observerDataFromRepository() {
@@ -137,14 +152,6 @@ class ListAudiosSequenceFragment : Fragment() {
         }
     }
 
-    /**
-     * This method updated this UI controller buttons
-     */
-    fun observerPublishSubjectFromMediaSessionAndMediaController(){
-        val subject = mediaSessionApp.getPublishSubject().subscribe {state ->
-
-        }
-    }
 
     fun observeUiControlsViewModel(){
         Handler().postDelayed({

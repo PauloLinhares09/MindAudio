@@ -17,6 +17,8 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
 
     private val subjectClick = PublishSubject.create<ItemAudio>()
 
+    private val subjectClickItem = PublishSubject.create<ItemAudio>()
+
     override fun getItemCount(): Int = list.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyFragHolder {
@@ -35,6 +37,10 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
             managerButtonPlay(holder, true)
             //Play
             subjectClick.onNext(item)
+        }
+
+        holder.itemView.rootView.setOnClickListener {
+            subjectClickItem.onNext(item)
         }
 
         item.currentStatePlayback?.let { state ->
@@ -107,6 +113,8 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
     }
 
     fun getSubjectClick() = subjectClick
+
+    fun getSubjectClickItem() = subjectClickItem
 
 
 
