@@ -3,6 +3,7 @@ package com.packapps.audio_core
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
+import android.support.v4.media.MediaMetadataCompat
 import java.lang.Exception
 
 class MediaPlayerApp(val androidContext: Context) {
@@ -67,6 +68,10 @@ class MediaPlayerApp(val androidContext: Context) {
     fun isPlaying(): Boolean = mMediaPlayer?.isPlaying ?: false
     fun setVolume(mediaVolumeDefault: Float) {
         mMediaPlayer?.setVolume(mediaVolumeDefault, mediaVolumeDefault)
+    }
+
+    fun currentMedia(): MediaMetadataCompat? {
+        return null
     }
 
     //State Media Player
