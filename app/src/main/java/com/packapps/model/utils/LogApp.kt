@@ -1,4 +1,4 @@
-package com.packapps.utils
+package com.packapps.model.utils
 
 import android.util.Log
 import com.packapps.BuildConfig

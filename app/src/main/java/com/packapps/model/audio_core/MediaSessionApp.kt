@@ -1,14 +1,12 @@
-package com.packapps.audio_core
+package com.packapps.model.audio_core
 
 import android.app.Activity
-import android.media.session.MediaController
 import android.os.Handler
 import android.os.SystemClock
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.packapps.utils.LogApp
-import io.reactivex.disposables.CompositeDisposable
+import com.packapps.model.utils.LogApp
 import io.reactivex.subjects.PublishSubject
 
 

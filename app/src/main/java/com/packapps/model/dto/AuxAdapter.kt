@@ -1,6 +1,6 @@
-package com.packapps.dto
+package com.packapps.model.dto
 
-import com.packapps.audio_core.MediaPlayerApp
+import com.packapps.model.audio_core.MediaPlayerApp
 
 open class AuxAdapter {
     var currentPosition : Int? = null

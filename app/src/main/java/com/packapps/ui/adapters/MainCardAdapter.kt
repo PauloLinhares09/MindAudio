@@ -1,4 +1,4 @@
-package com.packapps.adapters
+package com.packapps.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +8,8 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.packapps.dto.CardTab
-import com.packapps.dto.TypeCardTab
+import com.packapps.model.dto.CardTab
+import com.packapps.model.dto.TypeCardTab
 import com.packapps.R
 
 class MainCardAdapter : RecyclerView.Adapter<MainCardAdapter.MyMainHolder>(){

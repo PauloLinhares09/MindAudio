@@ -1,4 +1,4 @@
-package com.packapps.adapters
+package com.packapps.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +7,9 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.packapps.dto.ItemAudio
+import com.packapps.model.dto.ItemAudio
 import com.packapps.R
-import com.packapps.audio_core.MediaPlayerApp
+import com.packapps.model.audio_core.MediaPlayerApp
 import io.reactivex.subjects.PublishSubject
 
 class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqAdapter.MyFragHolder>() {

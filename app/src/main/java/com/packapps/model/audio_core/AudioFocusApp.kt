@@ -1,4 +1,4 @@
-package com.packapps.audio_core
+package com.packapps.model.audio_core
 
 import android.app.Activity
 import android.content.Context
@@ -11,8 +11,8 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
-import com.packapps.utils.LogApp
-import com.packapps.viewmodel.UiControlsViewModel
+import com.packapps.model.utils.LogApp
+import com.packapps.ui.viewmodel.UiControlsViewModel
 
 class AudioFocusApp : ViewModelStoreOwner {
     override fun getViewModelStore(): ViewModelStore {

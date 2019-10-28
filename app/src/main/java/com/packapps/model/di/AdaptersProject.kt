@@ -1,12 +1,12 @@
-package com.packapps.di
+package com.packapps.model.di
 
 import android.app.Activity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
-import com.packapps.adapters.FragmentListAudiosSeqAdapter
-import com.packapps.adapters.MainCardAdapter
-import com.packapps.adapters.MainCardOptionsAdapter
+import com.packapps.ui.adapters.FragmentListAudiosSeqAdapter
+import com.packapps.ui.adapters.MainCardAdapter
+import com.packapps.ui.adapters.MainCardOptionsAdapter
 
 
 interface AdaptersContract{

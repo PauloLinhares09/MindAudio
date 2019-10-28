@@ -10,14 +10,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.packapps.dto.ItemAudio
+import com.packapps.model.dto.ItemAudio
 import com.packapps.R
-import com.packapps.audio_core.MediaPlayerApp
-import com.packapps.audio_core.MediaSessionApp
-import com.packapps.presenter.ListAudiosSeqFragmentPresente
-import com.packapps.utils.LogApp
-import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
-import com.packapps.viewmodel.UiControlsViewModel
+import com.packapps.model.audio_core.MediaPlayerApp
+import com.packapps.model.audio_core.MediaSessionApp
+import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
+import com.packapps.model.utils.LogApp
+import com.packapps.ui.viewmodel.ListAudioSeqFragmentViewModel
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
 import org.koin.android.ext.android.inject
 
