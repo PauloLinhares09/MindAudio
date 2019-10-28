@@ -4,15 +4,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
-import com.packapps.dto.ItemOption
+import com.packapps.model.dto.ItemOption
 import com.packapps.R
-import com.packapps.presenter.MainActivityPresenter
-import com.packapps.viewmodel.ListAudioSeqFragmentViewModel
+import com.packapps.model.presenter.MainActivityPresenter
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import org.koin.android.architecture.ext.android.viewModel
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 
 class MainActivity : AppCompatActivity() {

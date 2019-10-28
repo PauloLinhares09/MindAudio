@@ -1,15 +1,12 @@
-package com.packapps.presenter
+package com.packapps.model.presenter
 
 import android.app.Activity
 import android.content.Context
 import androidx.recyclerview.widget.SnapHelper
-import com.packapps.adapters.FragmentListAudiosSeqAdapter
-import com.packapps.di.AdaptersContract
+import com.packapps.ui.adapters.FragmentListAudiosSeqAdapter
+import com.packapps.model.di.AdaptersContract
 import com.packapps.repository.RepositoryLocal
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 
 class ListAudiosSeqFragmentPresente(private val adapter : FragmentListAudiosSeqAdapter,
                                     private val adaptersContract: AdaptersContract,

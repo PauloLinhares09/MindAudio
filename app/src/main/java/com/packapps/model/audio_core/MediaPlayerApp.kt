@@ -1,13 +1,8 @@
-package com.packapps.audio_core
+package com.packapps.model.audio_core
 
 import android.content.Context
-import android.content.res.AssetFileDescriptor
 import android.media.MediaPlayer
 import android.net.Uri
-import com.packapps.R
-import com.packapps.utils.LogApp
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 import java.lang.Exception
 
 class MediaPlayerApp {
