@@ -6,7 +6,11 @@ import android.view.Menu
 import android.view.MenuItem
 import com.packapps.model.dto.ItemOption
 import com.packapps.R
+import com.packapps.model.audio_core.AudioFocusApp
+import com.packapps.model.audio_core.MediaPlayerApp
+import com.packapps.model.audio_core.MediaSessionApp
 import com.packapps.model.presenter.MainActivityPresenter
+
 
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -15,6 +19,10 @@ import org.koin.android.ext.android.inject
 class MainActivity : AppCompatActivity() {
 
     val presenter : MainActivityPresenter by inject()
+    val mediaSessionApp : MediaSessionApp by inject()
+    val audioFocusApp : AudioFocusApp by inject()
+    val mediaPlayerApp : MediaPlayerApp by inject()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +37,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
 
 
 //    private fun bindAdapterMain() {

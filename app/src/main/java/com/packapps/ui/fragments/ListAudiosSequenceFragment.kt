@@ -12,11 +12,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.packapps.model.dto.ItemAudio
 import com.packapps.R
+import com.packapps.model.audio_core.MediaBrowserApp
+import com.packapps.model.audio_core.MediaBrowserServiceApp
 import com.packapps.model.audio_core.MediaPlayerApp
-import com.packapps.model.audio_core.MediaSessionApp
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.utils.LogApp
 import com.packapps.ui.viewmodel.ListAudioSeqFragmentViewModel
+
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
 import org.koin.android.ext.android.inject
 
@@ -31,7 +33,12 @@ class ListAudiosSequenceFragment : Fragment() {
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
 
-    val mediaSessionApp : MediaSessionApp by inject()
+
+//    val mediaSessionApp : MediaSessionApp by inject()
+    lateinit var mediaBrowserServiceApp : MediaBrowserServiceApp
+    val mediaBrowserApp : MediaBrowserApp by inject()
+
+
     private var hasStopedAndAudioFocusAbandonment: Boolean = false
 
 
@@ -39,7 +46,6 @@ class ListAudiosSequenceFragment : Fragment() {
         super.onCreate(savedInstanceState)
         activity?.let {
             presenter.setContexActivity(it)
-            mediaSessionApp.setContext(it)
         }
 
         viewModel = ViewModelProvider(this).get(ListAudioSeqFragmentViewModel::class.java)
@@ -75,10 +81,10 @@ class ListAudiosSequenceFragment : Fragment() {
         viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer { path ->
             Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
             //Load media and play
-            mediaSessionApp.loadPath(path)
+            mediaBrowserApp.loadPath(path)
 
-            val state = mediaSessionApp.getStateFromMediaCrontroller()
-            val transportControllerCompat = mediaSessionApp.getTransportController()
+            val state = mediaBrowserApp.getStateFromMediaCrontroller()
+            val transportControllerCompat = mediaBrowserApp.getTransportController()
             if (state == PlaybackStateCompat.STATE_PLAYING)
                 transportControllerCompat.pause()
             else
@@ -98,8 +104,8 @@ class ListAudiosSequenceFragment : Fragment() {
             itemAudio.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
             presenter.adapter().updateJustItemOnPosition(itemAudio)
 
-            val state = mediaSessionApp.getStateFromMediaCrontroller()
-            val transportControllerCompat = mediaSessionApp.getTransportController()
+            val state = mediaBrowserApp.getStateFromMediaCrontroller()
+            val transportControllerCompat = mediaBrowserApp.getTransportController()
             if (state == PlaybackStateCompat.STATE_PLAYING){
 
 
@@ -140,14 +146,14 @@ class ListAudiosSequenceFragment : Fragment() {
      * This method updated this UI controller buttons
      */
     fun observerPublishSubjectFromMediaSessionAndMediaController(){
-        val subject = mediaSessionApp.getPublishSubject().subscribe {state ->
+        val subject = mediaBrowserApp.publishSubject.subscribe { state ->
 
         }
     }
 
     fun observeUiControlsViewModel(){
         Handler().postDelayed({
-            mediaSessionApp.getUiControlViewModel().stateControls.observe(this, Observer {state->
+            mediaBrowserApp.getUiControlViewModel().stateControls.observe(this, Observer {state->
                 LogApp.i(TAG, "mediaSessionApp.getUiControlViewModel().stateControls: $state")
                 when(state){
                     PlaybackStateCompat.STATE_PLAYING -> {
@@ -179,7 +185,7 @@ class ListAudiosSequenceFragment : Fragment() {
                 }
             })
 
-        }, 650)
+        }, 500)
 
 
 
@@ -190,22 +196,22 @@ class ListAudiosSequenceFragment : Fragment() {
     override fun onStop() {
         super.onStop()
 
-        mediaSessionApp.fragmentOnStop()
+//        mediaSessionApp.fragmentOnStop()
     }
 
     override fun onPause() {
         super.onPause()
 
         replayAudio = true
-        mediaSessionApp.fragmentOnPause()
+//        mediaSessionApp.fragmentOnPause()
     }
 
     override fun onStart() {
         super.onStart()
-        if (replayAudio){
-            replayAudio = false
-            mediaSessionApp.fragmentOnStart()
-        }
+//        if (replayAudio){
+//            replayAudio = false
+//            mediaSessionApp.fragmentOnStart()
+//        }
 
     }
 

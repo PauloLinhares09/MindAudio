@@ -1,6 +1,8 @@
 package com.packapps
 
+import android.app.Activity
 import android.app.Application
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

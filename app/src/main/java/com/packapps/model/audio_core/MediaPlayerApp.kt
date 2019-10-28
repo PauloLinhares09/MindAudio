@@ -3,13 +3,12 @@ package com.packapps.model.audio_core
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
-import java.lang.Exception
 
-class MediaPlayerApp {
+
+class MediaPlayerApp(val androidContext: Context) {
 
 
     var mMediaPlayer : MediaPlayer? = null
-    lateinit var context: Context
 
     private fun initializePlayer(){
         releasePlayer()
@@ -22,7 +21,7 @@ class MediaPlayerApp {
         val uri = Uri.parse(path)
         //data source
         try {
-            mMediaPlayer?.setDataSource(context, uri)
+            mMediaPlayer?.setDataSource(androidContext, uri)
 
             mMediaPlayer?.prepare()
 
@@ -69,6 +68,7 @@ class MediaPlayerApp {
     fun setVolume(mediaVolumeDefault: Float) {
         mMediaPlayer?.setVolume(mediaVolumeDefault, mediaVolumeDefault)
     }
+
 
     //State Media Player
     enum class MediaPlayerAppState{
