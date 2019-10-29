@@ -23,7 +23,7 @@ val appModule = module {
     //Single instance from repository
     single<AdaptersContract>{ AdaptersImpl() }
     single{ MainCardAdapter() }
-    single { MainCardOptionsAdapter() }
+    single { MainCardOptionsAdapter(PublishSubject.create<Int>()) }
     single<SnapHelper> { LinearSnapHelper() }
 
     //### For fragments
@@ -52,7 +52,7 @@ val appModule = module {
 
     //Factory
     factory { MainActivityPresenter(get(), get(), get(), get()) }
-    factory { ListAudiosSeqFragmentPresente(get(), get(), get(), get(), get()) }
+    factory { ListAudiosSeqFragmentPresente(get(), get(), get(), get(), get(), get()) }
     factory { MediaSessionApp(androidContext() , get(), get(), get(), get()) }
     factory {
         MediaBrowserApp(

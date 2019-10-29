@@ -6,13 +6,15 @@ import androidx.recyclerview.widget.SnapHelper
 import com.packapps.ui.adapters.FragmentListAudiosSeqAdapter
 import com.packapps.model.di.AdaptersContract
 import com.packapps.repository.RepositoryLocal
+import com.packapps.ui.adapters.MainCardOptionsAdapter
 import io.reactivex.disposables.CompositeDisposable
 
 class ListAudiosSeqFragmentPresente(private val adapter : FragmentListAudiosSeqAdapter,
                                     private val adaptersContract: AdaptersContract,
                                     private val snapHelper : SnapHelper,
                                     val repository : RepositoryLocal,
-                                    val composite : CompositeDisposable) {
+                                    val composite : CompositeDisposable,
+                                    val adapterOptions : MainCardOptionsAdapter) {
 
     private lateinit var context: Context
     private lateinit var activity: Activity
@@ -26,6 +28,7 @@ class ListAudiosSeqFragmentPresente(private val adapter : FragmentListAudiosSeqA
     fun setContexActivity(activity: Activity){
         this.activity = activity
     }
+
 
 
 

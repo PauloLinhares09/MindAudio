@@ -26,6 +26,7 @@ import com.packapps.model.audio_core.*
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.utils.LogApp
 import com.packapps.ui.MainActivity
+import com.packapps.ui.adapters.MainCardOptionsAdapter
 import com.packapps.ui.viewmodel.ListAudioSeqFragmentViewModel
 
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
@@ -71,6 +72,8 @@ class ListAudiosSequenceFragment : Fragment() {
         observerPuclishSubjectFromNotificationControll()
 
         observeUiControlsViewModel()
+
+        observerGetIntentForOpenGalery()
     }
 
     /**
@@ -123,15 +126,16 @@ class ListAudiosSequenceFragment : Fragment() {
         //Listen events from card adapter
         listenClickFromAdapter()
 
-        //observer get intent
-        observerGetIntentForOpenGalery()
-
 
         return mView
     }
 
     private fun observerGetIntentForOpenGalery() {
-        startActivityForResult(viewModel.getIntentForOpenGalery(), REQUEST_CODE_GALERY)
+        presenter.adapterOptions.publishSubject.subscribe { action_option ->
+            if (action_option == MainCardOptionsAdapter.MEDIA_CREATE){
+                startActivityForResult(viewModel.getIntentForOpenGalery(), REQUEST_CODE_GALERY)
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
