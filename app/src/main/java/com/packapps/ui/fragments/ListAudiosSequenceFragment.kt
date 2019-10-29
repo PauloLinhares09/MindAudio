@@ -201,33 +201,7 @@ class ListAudiosSequenceFragment : Fragment() {
                     transportControllerCompat.pause()
                 }
             }else {
-
-//                //##### just test notification
-//                val CHANNEL_ID = "notification_id"
-//
-//                val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-//                    val mChannel = NotificationChannel(CHANNEL_ID, "First Notification", NotificationManager.IMPORTANCE_HIGH)
-//                    mChannel.enableLights(true)
-//                    mChannel.lightColor = Color.GREEN
-//                    mChannel.enableVibration(true)
-//                    mChannel.description = "App first channel"
-//                    notificationManager.createNotificationChannel(mChannel)
-//
-//                }
-//
-//                val notificationId = 0
-//                val notificationBuilder = NotificationCompat.Builder(context!!, CHANNEL_ID).apply {
-//                    setContentTitle("Title")
-//                    setContentText("Description")
-//                    setSmallIcon(R.drawable.ic_arrow_next)
-//                }
-//
-//                notificationManager.notify(notificationId, notificationBuilder.build())
-//
-//                //###### end test
-
-
+                
                 if (itemAudioPlayingCurrent == null){
                     itemAudioPlayingCurrent = itemAudio
                     viewModel.getAudioUni(activity?.packageName ?: "")
