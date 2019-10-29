@@ -1,5 +1,6 @@
 package com.packapps.ui.viewmodel
 
+import android.content.Intent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.packapps.repository.RepositoryLocal
@@ -27,6 +28,10 @@ class ListAudioSeqFragmentViewModel : ViewModel() {
                     {
                         it.printStackTrace()
                     }))
+    }
+
+    fun getIntentForOpenGalery() : Intent{
+        return repository.getFilesFromUserDevice()
     }
 
 

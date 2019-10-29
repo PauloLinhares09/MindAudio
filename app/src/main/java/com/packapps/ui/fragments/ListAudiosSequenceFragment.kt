@@ -1,9 +1,6 @@
 package com.packapps.ui.fragments
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -46,6 +43,8 @@ class ListAudiosSequenceFragment : Fragment() {
     val presenter : ListAudiosSeqFragmentPresente by inject()
 
     val notificationBroadcast : MediaBroadcastNotificationActions by inject()
+
+    val REQUEST_CODE_GALERY = 109
 
 
 //    val mediaSessionApp : MediaSessionApp by inject()
@@ -124,8 +123,26 @@ class ListAudiosSequenceFragment : Fragment() {
         //Listen events from card adapter
         listenClickFromAdapter()
 
+        //observer get intent
+        observerGetIntentForOpenGalery()
+
 
         return mView
+    }
+
+    private fun observerGetIntentForOpenGalery() {
+        startActivityForResult(viewModel.getIntentForOpenGalery(), REQUEST_CODE_GALERY)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_GALERY && resultCode == Activity.RESULT_OK){
+            LogApp.i("GALERY", "galery result")
+           data?.data?.also {uri ->
+               LogApp.i("GALERY", "galery uri: ${uri}")
+           }
+
+        }
     }
 
     private fun observerDataFromRepository() {
