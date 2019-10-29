@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.OpenableColumns
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -144,6 +145,16 @@ class ListAudiosSequenceFragment : Fragment() {
             LogApp.i("GALERY", "galery result")
            data?.data?.also {uri ->
                LogApp.i("GALERY", "galery uri: ${uri}")
+               //get name of the file
+//               val cursor = activity?.contentResolver?.query(uri, null, null, null, null)
+//               cursor?.let {cursor ->
+//                   if (cursor.moveToFirst()){
+//                       val fileName = cursor.getColumnName(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+//                       LogApp.i("GALERY", "galery file name: ${fileName}")
+//                   }
+//
+//               }
+
            }
 
         }
