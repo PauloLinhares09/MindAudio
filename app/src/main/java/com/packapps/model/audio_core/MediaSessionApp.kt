@@ -1,22 +1,19 @@
 package com.packapps.model.audio_core
 
-import android.app.Activity
-import android.os.Handler
+import android.content.Context
 import android.os.SystemClock
-import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.packapps.model.utils.LogApp
-import io.reactivex.subjects.PublishSubject
 
 
-class MediaSessionApp(
+class MediaSessionApp(androidContext : Context,
                       val mBuilderState : PlaybackStateCompat.Builder,
                       val mediaPlayerApp: MediaPlayerApp,
-                      internal val publishSubject: PublishSubject<Int>,
-                      val audioFocusApp: AudioFocusApp) {
+                      val audioFocusApp: AudioFocusApp,
+                      val notificaManagerApp : NotificationManagerApp
+                      ) {
 
-    private lateinit var activity: Activity
 
     private val TAG = "MediaSessionApp"
 
@@ -24,54 +21,22 @@ class MediaSessionApp(
     private lateinit var mediaSesion : MediaSessionCompat
     private var mediaSessionCallback : MediaSessionCompat.Callback
 
-    private lateinit var mediaController : MediaControllerCompat
-    private var mediaControllerCallback : MediaControllerCompat.Callback
-
-    private lateinit var transportControllerCompat: MediaControllerCompat.TransportControls
-
-
-    fun setContext(activity: Activity){
-        this.activity = activity
-    }
 
 
     init {
+        notificaManagerApp.mediaSessionApp = this
 
-        //### ControllerCallback ###
-        mediaControllerCallback = object : MediaControllerCompat.Callback(){
+        val metaDataCompat = MusicLibraryUtil.getMetadata(androidContext, MusicLibraryUtil.idMock())
 
-            override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-                super.onPlaybackStateChanged(state)
-
-                when(state?.state){
-                    PlaybackStateCompat.STATE_PLAYING -> {
-                        //Change button to pause
-                        LogApp.i(TAG, "STATE_PLAYING Change button to Pause")
-                        publishSubject.onNext(state.state)
-                        audioFocusApp.uiControlsViewModel.stateControls.postValue(state?.state)
-
-                    }
-                    PlaybackStateCompat.STATE_PAUSED -> {
-                        LogApp.i(TAG, "STATE_PAUSED Change button to Play")
-                        publishSubject.onNext(state.state)
-                        audioFocusApp.uiControlsViewModel.stateControls.postValue(state?.state)
-
-                    }
-                    PlaybackStateCompat.STATE_STOPPED -> {
-                        LogApp.i(TAG, "STATE_STOPPED Change button to Play")
-                        publishSubject.onNext(state.state)
-                        audioFocusApp.uiControlsViewModel.stateControls.postValue(state?.state)
-                    }
-                }
-
-            }
-        }
 
         //### Media session Callback ###
         mediaSessionCallback = object : MediaSessionCompat.Callback(){
             override fun onPlay() {
                 super.onPlay()
                 LogApp.i("TAG", "MediaSesion.Callback onPlay")
+                mediaSesion.isActive = true
+
+                getUiControlViewModel().stateControls.postValue(PlaybackStateCompat.STATE_PLAYING)
 //                mediaPlayerApp.play()
                 audioFocusApp.requesAudioFocus()
 
@@ -80,55 +45,63 @@ class MediaSessionApp(
                 mediaSesion.setPlaybackState(mBuilderState.build())
 
 
+
+                notificaManagerApp.moveServiceToStatedState(getPlaybackState(), metaDataCompat)
+
+
+
+
             }
 
             override fun onStop() {
                 super.onStop()
                 LogApp.i("TAG", "MediaSesion.Callback onStop")
+                getUiControlViewModel().stateControls.postValue(PlaybackStateCompat.STATE_STOPPED)
 
                 mediaPlayerApp.stop()
                 audioFocusApp.abandonAudioFocus()
 
                 mBuilderState.setState(PlaybackStateCompat.STATE_STOPPED, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
                 mediaSesion.setPlaybackState(mBuilderState.build())
+
+                notificaManagerApp.moveServiceOutOfStartedState(getPlaybackState())
+
+                mediaSesion.isActive = false
+
             }
 
             override fun onPause() {
                 super.onPause()
                 LogApp.i("TAG", "MediaSesion.Callback onPause")
+                getUiControlViewModel().stateControls.postValue(PlaybackStateCompat.STATE_PAUSED)
 
                 mediaPlayerApp.pause()
 
                 mBuilderState.setState(PlaybackStateCompat.STATE_PAUSED, mediaPlayerApp.currentPosition(), 1.0F, SystemClock.elapsedRealtime())
                 mediaSesion.setPlaybackState(mBuilderState.build())
 
+                notificaManagerApp.updateNotificationControllerToPause(getPlaybackState(), metaDataCompat)
+
             }
         }
-        Handler().postDelayed({ //This is necessary only to inject Koin //TODO Refactory it after
 
-            audioFocusApp.activity = activity
-            audioFocusApp.mediaPlayerApp = mediaPlayerApp
-
-
-            //Initialize my Builder State
-            mBuilderState.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE)
-            mBuilderState.setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f, SystemClock.elapsedRealtime())
-
-            //Initialize MediaPlayer
-            mediaPlayerApp.context = activity
-
-            //Create my MediaSession
-            mediaSesion = MediaSessionCompat(activity!!, TAG)
-            mediaSesion.setCallback(mediaSessionCallback)
-            mediaSesion.setPlaybackState(mBuilderState.build())
+//            audioFocusApp.activity = activity
+        audioFocusApp.mediaPlayerApp = mediaPlayerApp
 
 
-            //Create my Media Controller
-            mediaController = MediaControllerCompat(activity!!, mediaSesion)
-            mediaController.registerCallback(mediaControllerCallback)
-            transportControllerCompat = mediaController.transportControls
+        //Initialize my Builder State
+        mBuilderState.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE)
+        mBuilderState.setState(PlaybackStateCompat.STATE_NONE, 0, 1.0f, SystemClock.elapsedRealtime())
 
-        }, 400)
+        //Initialize MediaPlayer
+//            mediaPlayerApp.context = activity
+
+        //Create my MediaSession
+        mediaSesion = MediaSessionCompat(androidContext, TAG)
+        mediaSesion.setCallback(mediaSessionCallback)
+        mediaSesion.setPlaybackState(mBuilderState.build())
+
+
 
     }
 
@@ -136,27 +109,18 @@ class MediaSessionApp(
         mediaPlayerApp.loadMedia(path)
     }
 
-    fun getStateFromMediaCrontroller(): Int = mediaController.playbackState.state
-    fun getTransportController(): MediaControllerCompat.TransportControls  = transportControllerCompat
-    fun fragmentOnStop() {
-        if (mediaController.playbackState.state == PlaybackStateCompat.STATE_PLAYING){
-            transportControllerCompat.stop()
-        }
-    }
-
-    fun fragmentOnPause() {
-        if (mediaController.playbackState.state == PlaybackStateCompat.STATE_PLAYING){
-            transportControllerCompat.pause()
-        }
-    }
-
-    fun fragmentOnStart() {
-        transportControllerCompat.play()
-    }
-
-    fun getPublishSubject() = publishSubject
-
     fun getUiControlViewModel() = audioFocusApp.uiControlsViewModel
+
+    fun getSessionToken(): MediaSessionCompat.Token = mediaSesion.sessionToken
+
+    fun releaseAllInstances() {
+        audioFocusApp.abandonAudioFocus()
+        mediaPlayerApp?.releasePlayer()
+        mediaSesion.release()
+
+    }
+
+    fun getPlaybackState(): PlaybackStateCompat = mediaSesion.controller.playbackState
 
 
 

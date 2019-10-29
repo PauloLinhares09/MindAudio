@@ -1,5 +1,14 @@
 package com.packapps.ui.fragments
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.media.session.PlaybackStateCompat
@@ -8,15 +17,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.packapps.model.dto.ItemAudio
 import com.packapps.R
-import com.packapps.model.audio_core.MediaPlayerApp
-import com.packapps.model.audio_core.MediaSessionApp
+import com.packapps.model.audio_core.*
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.utils.LogApp
+import com.packapps.ui.MainActivity
 import com.packapps.ui.viewmodel.ListAudioSeqFragmentViewModel
+
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
 import org.koin.android.ext.android.inject
 
@@ -31,7 +45,14 @@ class ListAudiosSequenceFragment : Fragment() {
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
 
-    val mediaSessionApp : MediaSessionApp by inject()
+    val notificationBroadcast : MediaBroadcastNotificationActions by inject()
+
+
+//    val mediaSessionApp : MediaSessionApp by inject()
+    lateinit var mediaBrowserServiceApp : MediaBrowserServiceApp
+    val mediaBrowserApp : MediaBrowserApp by inject()
+
+
     private var hasStopedAndAudioFocusAbandonment: Boolean = false
 
 
@@ -39,7 +60,6 @@ class ListAudiosSequenceFragment : Fragment() {
         super.onCreate(savedInstanceState)
         activity?.let {
             presenter.setContexActivity(it)
-            mediaSessionApp.setContext(it)
         }
 
         viewModel = ViewModelProvider(this).get(ListAudioSeqFragmentViewModel::class.java)
@@ -49,9 +69,46 @@ class ListAudiosSequenceFragment : Fragment() {
 
         observerPublishSubjectFromMediaSessionAndMediaController()
 
-        observeUiControlsViewModel()
+        observerPuclishSubjectFromNotificationControll()
 
+        observeUiControlsViewModel()
     }
+
+    /**
+     * This method listen the actions buttons from notification and change the stateof the media
+     */
+    private fun observerPuclishSubjectFromNotificationControll() {
+        notificationBroadcast.publishSubject.subscribe {action ->
+            val transportControllerCompat = mediaBrowserApp.getTransportController()
+            if (action == MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PAUSE){
+                LogApp.i("NOTIFICATION", "Action pause clicked")
+                transportControllerCompat.pause()
+
+            }else if (action == MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PLAY){
+                LogApp.i("NOTIFICATION", "Action play clicked")
+                transportControllerCompat.play()
+            }
+        }
+    }
+
+    val CHANNEL_ID = "channel id"
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.app_name)
+            val descriptionText = "Channel description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+
+            with(NotificationManagerCompat.from(activity!!)){
+                createNotificationChannel(channel)
+            }
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,10 +132,10 @@ class ListAudiosSequenceFragment : Fragment() {
         viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer { path ->
             Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
             //Load media and play
-            mediaSessionApp.loadPath(path)
+            mediaBrowserApp.loadPath(path)
 
-            val state = mediaSessionApp.getStateFromMediaCrontroller()
-            val transportControllerCompat = mediaSessionApp.getTransportController()
+            val state = mediaBrowserApp.getStateFromMediaCrontroller()
+            val transportControllerCompat = mediaBrowserApp.getTransportController()
             if (state == PlaybackStateCompat.STATE_PLAYING)
                 transportControllerCompat.pause()
             else
@@ -98,8 +155,8 @@ class ListAudiosSequenceFragment : Fragment() {
             itemAudio.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
             presenter.adapter().updateJustItemOnPosition(itemAudio)
 
-            val state = mediaSessionApp.getStateFromMediaCrontroller()
-            val transportControllerCompat = mediaSessionApp.getTransportController()
+            val state = mediaBrowserApp.getStateFromMediaCrontroller()
+            val transportControllerCompat = mediaBrowserApp.getTransportController()
             if (state == PlaybackStateCompat.STATE_PLAYING){
 
 
@@ -112,6 +169,32 @@ class ListAudiosSequenceFragment : Fragment() {
                     transportControllerCompat.pause()
                 }
             }else {
+
+//                //##### just test notification
+//                val CHANNEL_ID = "notification_id"
+//
+//                val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+//                    val mChannel = NotificationChannel(CHANNEL_ID, "First Notification", NotificationManager.IMPORTANCE_HIGH)
+//                    mChannel.enableLights(true)
+//                    mChannel.lightColor = Color.GREEN
+//                    mChannel.enableVibration(true)
+//                    mChannel.description = "App first channel"
+//                    notificationManager.createNotificationChannel(mChannel)
+//
+//                }
+//
+//                val notificationId = 0
+//                val notificationBuilder = NotificationCompat.Builder(context!!, CHANNEL_ID).apply {
+//                    setContentTitle("Title")
+//                    setContentText("Description")
+//                    setSmallIcon(R.drawable.ic_arrow_next)
+//                }
+//
+//                notificationManager.notify(notificationId, notificationBuilder.build())
+//
+//                //###### end test
+
 
                 if (itemAudioPlayingCurrent == null){
                     itemAudioPlayingCurrent = itemAudio
@@ -140,14 +223,14 @@ class ListAudiosSequenceFragment : Fragment() {
      * This method updated this UI controller buttons
      */
     fun observerPublishSubjectFromMediaSessionAndMediaController(){
-        val subject = mediaSessionApp.getPublishSubject().subscribe {state ->
+        val subject = mediaBrowserApp.publishSubject.subscribe { state ->
 
         }
     }
 
     fun observeUiControlsViewModel(){
         Handler().postDelayed({
-            mediaSessionApp.getUiControlViewModel().stateControls.observe(this, Observer {state->
+            mediaBrowserApp.getUiControlViewModel().stateControls.observe(this, Observer {state->
                 LogApp.i(TAG, "mediaSessionApp.getUiControlViewModel().stateControls: $state")
                 when(state){
                     PlaybackStateCompat.STATE_PLAYING -> {
@@ -179,7 +262,7 @@ class ListAudiosSequenceFragment : Fragment() {
                 }
             })
 
-        }, 650)
+        }, 500)
 
 
 
@@ -190,22 +273,30 @@ class ListAudiosSequenceFragment : Fragment() {
     override fun onStop() {
         super.onStop()
 
-        mediaSessionApp.fragmentOnStop()
+//        mediaSessionApp.fragmentOnStop()
+
+        activity?.unregisterReceiver(notificationBroadcast)
     }
 
     override fun onPause() {
         super.onPause()
 
         replayAudio = true
-        mediaSessionApp.fragmentOnPause()
+//        mediaSessionApp.fragmentOnPause()
     }
 
     override fun onStart() {
         super.onStart()
-        if (replayAudio){
-            replayAudio = false
-            mediaSessionApp.fragmentOnStart()
-        }
+//        if (replayAudio){
+//            replayAudio = false
+//            mediaSessionApp.fragmentOnStart()
+//        }
+
+
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PLAY)
+        intentFilter.addAction(MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PAUSE)
+        activity?.registerReceiver(notificationBroadcast, intentFilter)
 
     }
 
