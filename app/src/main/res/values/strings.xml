@@ -17,4 +17,6 @@
     <string name="stop">stop</string>
     <string name="next">next</string>
     <string name="previous">previous</string>
+    <string name="audio_activeted">Áudio ativado</string>
+    <string name="your_audio_is_active">Seu áudio está ativo</string>
 </resources>
