@@ -126,11 +126,8 @@ class MediaBrowserServiceApp : MediaBrowserServiceCompat() {
 
         Handler().postDelayed({
             setSessionToken(mediaSessionApp.getSessionToken())
-
-
             notificationManagerApp = mediaSessionApp.notificaManagerApp
         }, 800)
-
 
 
         //Create Notification Builder foregrownd
@@ -138,8 +135,8 @@ class MediaBrowserServiceApp : MediaBrowserServiceCompat() {
         val s =  mediaSessionApp.notificaManagerApp.subject.subscribe { triple ->
             LogApp.i(TAG, "subject: ${triple.first}")
             val notificationBuilder = triple.second
-            val stateForeground = triple.first
-            val stopNotification = triple.third
+            val stateForeground = triple.first //usually onplay from playback controll
+            val stopNotification = triple.third //from onStop
 
             if (stateForeground){
 
@@ -210,6 +207,10 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
     private var mPauseAction: NotificationCompat.Action
     private var mNextAction: NotificationCompat.Action
     private var mPrevAction: NotificationCompat.Action
+
+    //Action from Broadcast in buttons notification
+    val NOTIFICATION_ACTION_PLAY = "com.packapps.mrremember.ACTION_PLAY"
+    val NOTIFICATION_ACTION_PAUSE = "com.packapps.mrremember.ACTION_PAUSE"
 
     init {
 
@@ -342,6 +343,42 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
             setContentTitle("Title")
             setContentText("Description")
             setSmallIcon(R.drawable.ic_arrow_next)
+
+            //### Pending intent
+            val notificationIntent  = Intent(androidContext, MainActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(androidContext, notificationId, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+//            setContentIntent(pendingIntent)
+//            setAutoCancel(true) //TODO
+
+
+
+
+            //### Add buttons actions
+
+            //Create pendindIntent for Broadcast get actions click from notification
+            val pendingIntentPlay = PendingIntent.getBroadcast(androidContext, notificationId, Intent(NOTIFICATION_ACTION_PLAY), PendingIntent.FLAG_ONE_SHOT)
+            val pendingIntentPause = PendingIntent.getBroadcast(androidContext, notificationId, Intent(NOTIFICATION_ACTION_PAUSE), PendingIntent.FLAG_ONE_SHOT)
+
+
+            //Add pause button
+            if (isPlaying) {
+//                addAction(mPauseAction)
+                addAction(R.drawable.ic_pause, "Pause", pendingIntentPause)
+            } else {
+//                addAction(mPlayAction)
+                addAction(R.drawable.ic_play, "Play", pendingIntentPlay)
+            }
+
+            //Previous and Next
+            if (playbackStateCompat.actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0L)
+                addAction(mPrevAction)
+
+            if (playbackStateCompat.actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0L)
+                addAction(mNextAction)
+
+
+
+
         }
 
         return notificationBuilder
