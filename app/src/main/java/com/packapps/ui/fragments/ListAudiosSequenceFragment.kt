@@ -69,7 +69,23 @@ class ListAudiosSequenceFragment : Fragment() {
 
         observerPublishSubjectFromMediaSessionAndMediaController()
 
+        observerPuclishSubjectFromNotificationControll()
+
         observeUiControlsViewModel()
+    }
+
+    private fun observerPuclishSubjectFromNotificationControll() {
+        notificationBroadcast.publishSubject.subscribe {action ->
+            val transportControllerCompat = mediaBrowserApp.getTransportController()
+            if (action == MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PAUSE){
+                LogApp.i("NOTIFICATION", "Action pause clicked")
+                transportControllerCompat.pause()
+
+            }else if (action == MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PLAY){
+                LogApp.i("NOTIFICATION", "Action play clicked")
+                transportControllerCompat.play()
+            }
+        }
     }
 
     val CHANNEL_ID = "channel id"
