@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -24,10 +25,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.packapps.model.dto.ItemAudio
 import com.packapps.R
-import com.packapps.model.audio_core.MediaBrowserApp
-import com.packapps.model.audio_core.MediaBrowserServiceApp
-import com.packapps.model.audio_core.MediaNotificationStyleApp
-import com.packapps.model.audio_core.MediaPlayerApp
+import com.packapps.model.audio_core.*
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.utils.LogApp
 import com.packapps.ui.MainActivity
@@ -46,6 +44,8 @@ class ListAudiosSequenceFragment : Fragment() {
     lateinit var viewModel : ListAudioSeqFragmentViewModel
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
+
+    val notificationBroadcast : MediaBroadcastNotificationActions by inject()
 
 
 //    val mediaSessionApp : MediaSessionApp by inject()
@@ -255,6 +255,8 @@ class ListAudiosSequenceFragment : Fragment() {
         super.onStop()
 
 //        mediaSessionApp.fragmentOnStop()
+
+        activity?.unregisterReceiver(notificationBroadcast)
     }
 
     override fun onPause() {
@@ -270,6 +272,12 @@ class ListAudiosSequenceFragment : Fragment() {
 //            replayAudio = false
 //            mediaSessionApp.fragmentOnStart()
 //        }
+
+
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PLAY)
+        intentFilter.addAction(MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PAUSE)
+        activity?.registerReceiver(notificationBroadcast, intentFilter)
 
     }
 

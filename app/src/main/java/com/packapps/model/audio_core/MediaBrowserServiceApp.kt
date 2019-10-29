@@ -208,10 +208,6 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
     private var mNextAction: NotificationCompat.Action
     private var mPrevAction: NotificationCompat.Action
 
-    //Action from Broadcast in buttons notification
-    val NOTIFICATION_ACTION_PLAY = "com.packapps.mrremember.ACTION_PLAY"
-    val NOTIFICATION_ACTION_PAUSE = "com.packapps.mrremember.ACTION_PAUSE"
-
     init {
 
         notificationManager = androidContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -356,8 +352,8 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
             //### Add buttons actions
 
             //Create pendindIntent for Broadcast get actions click from notification
-            val pendingIntentPlay = PendingIntent.getBroadcast(androidContext, notificationId, Intent(NOTIFICATION_ACTION_PLAY), PendingIntent.FLAG_ONE_SHOT)
-            val pendingIntentPause = PendingIntent.getBroadcast(androidContext, notificationId, Intent(NOTIFICATION_ACTION_PAUSE), PendingIntent.FLAG_ONE_SHOT)
+            val pendingIntentPlay = PendingIntent.getBroadcast(androidContext, notificationId, Intent(MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PLAY), PendingIntent.FLAG_ONE_SHOT)
+            val pendingIntentPause = PendingIntent.getBroadcast(androidContext, notificationId, Intent(MediaBroadcastNotificationActions.NOTIFICATION_ACTION_PAUSE), PendingIntent.FLAG_ONE_SHOT)
 
 
             //Add pause button

@@ -40,6 +40,7 @@ val appModule = module {
             get(named("triple"))
         )
     }
+    single { MediaBroadcastNotificationActions() }
 
     //Repository
     single { RepositoryLocal() }
