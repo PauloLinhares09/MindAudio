@@ -1,5 +1,13 @@
 package com.packapps.ui.fragments
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.media.session.PlaybackStateCompat
@@ -8,15 +16,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.packapps.model.dto.ItemAudio
 import com.packapps.R
 import com.packapps.model.audio_core.MediaBrowserApp
 import com.packapps.model.audio_core.MediaBrowserServiceApp
+import com.packapps.model.audio_core.MediaNotificationStyleApp
 import com.packapps.model.audio_core.MediaPlayerApp
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.utils.LogApp
+import com.packapps.ui.MainActivity
 import com.packapps.ui.viewmodel.ListAudioSeqFragmentViewModel
 
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
@@ -56,8 +70,26 @@ class ListAudiosSequenceFragment : Fragment() {
         observerPublishSubjectFromMediaSessionAndMediaController()
 
         observeUiControlsViewModel()
-
     }
+
+    val CHANNEL_ID = "channel id"
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.app_name)
+            val descriptionText = "Channel description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+
+            with(NotificationManagerCompat.from(activity!!)){
+                createNotificationChannel(channel)
+            }
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -118,6 +150,32 @@ class ListAudiosSequenceFragment : Fragment() {
                     transportControllerCompat.pause()
                 }
             }else {
+
+//                //##### just test notification
+//                val CHANNEL_ID = "notification_id"
+//
+//                val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+//                    val mChannel = NotificationChannel(CHANNEL_ID, "First Notification", NotificationManager.IMPORTANCE_HIGH)
+//                    mChannel.enableLights(true)
+//                    mChannel.lightColor = Color.GREEN
+//                    mChannel.enableVibration(true)
+//                    mChannel.description = "App first channel"
+//                    notificationManager.createNotificationChannel(mChannel)
+//
+//                }
+//
+//                val notificationId = 0
+//                val notificationBuilder = NotificationCompat.Builder(context!!, CHANNEL_ID).apply {
+//                    setContentTitle("Title")
+//                    setContentText("Description")
+//                    setSmallIcon(R.drawable.ic_arrow_next)
+//                }
+//
+//                notificationManager.notify(notificationId, notificationBuilder.build())
+//
+//                //###### end test
+
 
                 if (itemAudioPlayingCurrent == null){
                     itemAudioPlayingCurrent = itemAudio

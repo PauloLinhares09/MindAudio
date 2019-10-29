@@ -1,9 +1,18 @@
 package com.packapps.ui
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.packapps.model.dto.ItemOption
 import com.packapps.R
 import com.packapps.model.audio_core.AudioFocusApp
@@ -33,6 +42,38 @@ class MainActivity : AppCompatActivity() {
 
 //        bindAdapterMain()
         bindAdapterMainOptions()
+
+        //just test
+//        var notification_builder : NotificationCompat.Builder
+//        val notification_manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            val chanel_id = "3000"
+//            val name = "Channel Name"
+//            val description = "Chanel Description";
+//            val importance = NotificationManager.IMPORTANCE_LOW
+//            val mChannel = NotificationChannel(chanel_id, name, importance)
+//            mChannel.setDescription(description)
+//            mChannel.enableLights(true)
+//            mChannel.setLightColor(Color.BLUE)
+//            notification_manager.createNotificationChannel(mChannel);
+//            notification_builder = NotificationCompat.Builder(this, chanel_id)
+//        } else {
+//            notification_builder = NotificationCompat.Builder(this)
+//        }
+//
+//        val open_activity_intent = Intent(this, MainActivity::class.java)
+//        val pending_intent = PendingIntent.getActivity(this, 0, open_activity_intent,0)
+//
+//        notification_builder.setSmallIcon(R.drawable.ic_launcher_background)
+//            .setContentTitle("Notification Title")
+//            .setContentText("Notification Body")
+//            .setAutoCancel(true)
+//            .setContentIntent(pending_intent)
+//
+//        with(NotificationManagerCompat.from(this)){
+//            notify(34833, notification_builder.build())
+//        }
 
 
 

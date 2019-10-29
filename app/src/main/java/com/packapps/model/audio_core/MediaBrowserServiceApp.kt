@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -136,18 +137,21 @@ class MediaBrowserServiceApp : MediaBrowserServiceCompat() {
 
         val s =  mediaSessionApp.notificaManagerApp.subject.subscribe { triple ->
             LogApp.i(TAG, "subject: ${triple.first}")
+            val notificationBuilder = triple.second
+            val stateForeground = triple.first
+            val stopNotification = triple.third
 
-            if (triple.first){
+            if (stateForeground){
 
-                startForeground(NOTIFICATION_ID, triple.second)
+                startForeground(NOTIFICATION_ID, notificationBuilder)
 
-            }else if (triple.first == false && triple.third == false){
+            }else if (stateForeground == false && stopNotification == false){
 
                 stopForeground(false)
                 val manager = notificationManagerApp.getNotificationManager()
-                manager.notify(NOTIFICATION_ID, triple.second)
+                manager.notify(NOTIFICATION_ID, notificationBuilder)
 
-            }else if (triple.third){
+            }else if (stopNotification){
 
                 stopForeground(true)
                 stopSelf()
@@ -270,68 +274,77 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
             CHANNEL_ID = mCreateChannelId()
         }
 
-        val mNotificationBuilder = NotificationCompat.Builder(
-            androidContext,
-            CHANNEL_ID
-        ).apply {
-            //Take Advantage media Style
-            setStyle(androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSessionApp.getSessionToken())
-                .setShowCancelButton(true)
-                .setCancelButtonIntent(
-                    MediaButtonReceiver.buildMediaButtonPendingIntent(
-                        androidContext,
-                        PlaybackStateCompat.ACTION_STOP
-                    )
-                )
-                .setShowActionsInCompactView(0, 1, 2)
-            )
+//        val mNotificationBuilder = NotificationCompat.Builder(
+//            androidContext,
+//            CHANNEL_ID
+//        ).apply {
+//            //Take Advantage media Style
+//            setStyle(androidx.media.app.NotificationCompat.MediaStyle()
+//                .setMediaSession(mediaSessionApp.getSessionToken())
+//                .setShowCancelButton(true)
+//                .setCancelButtonIntent(
+//                    MediaButtonReceiver.buildMediaButtonPendingIntent(
+//                        androidContext,
+//                        PlaybackStateCompat.ACTION_STOP
+//                    )
+//                )
+//                .setShowActionsInCompactView(0, 1, 2)
+//            )
+//
+//            color = ContextCompat.getColor(
+//                androidContext,
+//                R.color.colorPrimaryDark
+//            )
+//
+//            setContentIntent(createIntent())
+//
+//            setContentTitle("Title")
+//            setContentText("Subtitle")
+//            setSubText("Description")
+//            setLargeIcon(
+//                BitmapFactory.decodeResource(
+//                    androidContext.resources,
+//                    R.drawable.ic_arrow_next
+//                )
+//            )
+//
+//            setDeleteIntent(
+//                MediaButtonReceiver.buildMediaButtonPendingIntent(
+//                    androidContext,
+//                    PlaybackStateCompat.ACTION_STOP
+//                )
+//            )
+//
+//            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+//
+//            setSmallIcon(R.drawable.ic_arrow_next)
+//
+//
+//            //Add pause button
+//
+//            if (isPlaying)
+//                addAction(mPauseAction)
+//            else
+//                addAction(mPlayAction)
+//
+//            //Previous and Next
+//            if (playbackStateCompat.actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0L)
+//                addAction(mPrevAction)
+//
+//            if (playbackStateCompat.actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0L)
+//                addAction(mNextAction)
+//        }
 
-            color = ContextCompat.getColor(
-                androidContext,
-                R.color.colorPrimaryDark
-            )
+//        return mNotificationBuilder
 
-            setContentIntent(createIntent())
-
+        val notificationId = 0
+        val notificationBuilder = NotificationCompat.Builder(androidContext, CHANNEL_ID).apply {
             setContentTitle("Title")
-            setContentText("Subtitle")
-            setSubText("Description")
-            setLargeIcon(
-                BitmapFactory.decodeResource(
-                    androidContext.resources,
-                    R.drawable.ic_arrow_next
-                )
-            )
-
-            setDeleteIntent(
-                MediaButtonReceiver.buildMediaButtonPendingIntent(
-                    androidContext,
-                    PlaybackStateCompat.ACTION_STOP
-                )
-            )
-
-            setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-
+            setContentText("Description")
             setSmallIcon(R.drawable.ic_arrow_next)
-
-
-            //Add pause button
-
-            if (isPlaying)
-                addAction(mPauseAction)
-            else
-                addAction(mPlayAction)
-
-            //Previous and Next
-            if (playbackStateCompat.actions and PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS != 0L)
-                addAction(mPrevAction)
-
-            if (playbackStateCompat.actions and PlaybackStateCompat.ACTION_SKIP_TO_NEXT != 0L)
-                addAction(mNextAction)
         }
 
-        return mNotificationBuilder
+        return notificationBuilder
 
     }
 
@@ -351,23 +364,15 @@ class MediaNotificationStyleApp (val androidContext: Context, val mediaSessionAp
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun mCreateChannelId(): String {
-        val mNotificationManager = androidContext
-            .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        // The id of the channel.
-        val id = CHANNEL_ID
-        // The user-visible name of the channel.
-        val name = "Media playback"
-        // The user-visible description of the channel.
-        val description = "Media playback controls"
-        val importance = NotificationManager.IMPORTANCE_LOW
-        val mChannel = NotificationChannel(id, name, importance)
-        // Configure the notification channel.
-        mChannel.description = description
-        mChannel.setShowBadge(false)
-        mChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-        mNotificationManager.createNotificationChannel(mChannel)
 
-        return mChannel.id
+        val mChannel = NotificationChannel(CHANNEL_ID, "First Notification", NotificationManager.IMPORTANCE_HIGH)
+        mChannel.enableLights(true)
+        mChannel.lightColor = Color.GREEN
+        mChannel.enableVibration(true)
+        mChannel.description = "App first channel"
+        notificationManager.createNotificationChannel(mChannel)
+
+        return CHANNEL_ID
     }
 
     internal fun getmNotificationManager(): NotificationManager = notificationManager
