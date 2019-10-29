@@ -74,6 +74,9 @@ class ListAudiosSequenceFragment : Fragment() {
         observeUiControlsViewModel()
     }
 
+    /**
+     * This method listen the actions buttons from notification and change the stateof the media
+     */
     private fun observerPuclishSubjectFromNotificationControll() {
         notificationBroadcast.publishSubject.subscribe {action ->
             val transportControllerCompat = mediaBrowserApp.getTransportController()
