@@ -1,9 +1,11 @@
 package com.packapps.ui.viewmodel
 
 import android.content.Intent
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.packapps.repository.RepositoryLocal
+import com.packapps.repository.entity.ItemAudio
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -34,6 +36,13 @@ class ListAudioSeqFragmentViewModel : ViewModel() {
         return repository.getFilesFromUserDevice()
     }
 
+    fun getItemsAudioFromRoom() : LiveData<MutableList<ItemAudio>>{
+        return repository.getItemsAudioFromRoom()
+    }
+
+    fun saveItemAudioOnRoom(itemAudio: ItemAudio) : Long{
+        return repository.saveItemsAudioFromRoom(itemAudio)
+    }
 
 
 

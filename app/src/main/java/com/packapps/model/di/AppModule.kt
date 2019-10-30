@@ -46,7 +46,7 @@ val appModule = module {
     single { AppDatabase.getDatabaseBuilder(androidContext()) }
 
     //Repository
-    single { RepositoryLocal() }
+    single { RepositoryLocal(get()) }
 
     //RX
     single { CompositeDisposable() }
@@ -64,6 +64,8 @@ val appModule = module {
             get(named("int"))
         )
     }
+
+
 
 
 
