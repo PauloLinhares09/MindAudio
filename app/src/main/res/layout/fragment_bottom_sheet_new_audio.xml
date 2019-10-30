@@ -4,6 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/sheet_round"
         tools:context=".ui.fragments.BottomSheetNewAudioFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -88,7 +89,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/button_rounded_gray"
+            android:background="@drawable/button_rounded"
+            android:textColor="@android:color/white"
             android:text="Salvar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
