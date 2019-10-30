@@ -11,13 +11,18 @@ import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 import com.packapps.R
+import com.packapps.repository.database.AppDatabase
+import com.packapps.repository.entity.ItemAudio
 import kotlinx.android.synthetic.main.fragment_bottom_sheet_new_audio.*
 import kotlinx.android.synthetic.main.fragment_bottom_sheet_new_audio.view.*
+import org.koin.android.ext.android.inject
 
 
 class BottomSheetNewAudioFragment : BottomSheetDialogFragment() {
 
     private var uri: Uri? = null
+
+    private val appDatabase : AppDatabase by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +38,9 @@ class BottomSheetNewAudioFragment : BottomSheetDialogFragment() {
             mView.btSave.setOnClickListener {
                 val name = mView.etName.text
                 if (!name.isEmpty()){
-
+                    val itemAudioDao = appDatabase.ItemAudioDao()
+                    val id = itemAudioDao.insertItemAudio(ItemAudio(0, "default", name.toString(), uri.toString()))
+                    Toast.makeText(context, "saved id: ${id}", Toast.LENGTH_SHORT).show()
 
                 }else{
                     Toast.makeText(context, getString(R.string.name_empty), Toast.LENGTH_SHORT).show()

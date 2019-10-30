@@ -7,7 +7,7 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.packapps.model.dto.ItemAudio
+import com.packapps.repository.entity.ItemAudio
 import com.packapps.R
 import com.packapps.model.audio_core.MediaPlayerApp
 import io.reactivex.subjects.PublishSubject

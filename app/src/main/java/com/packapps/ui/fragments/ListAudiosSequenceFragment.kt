@@ -1,33 +1,26 @@
 package com.packapps.ui.fragments
 
 import android.app.*
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.provider.OpenableColumns
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.packapps.model.dto.ItemAudio
+import com.packapps.repository.entity.ItemAudio
 import com.packapps.R
 import com.packapps.model.audio_core.*
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.utils.LogApp
-import com.packapps.ui.MainActivity
 import com.packapps.ui.adapters.MainCardOptionsAdapter
 import com.packapps.ui.viewmodel.ListAudioSeqFragmentViewModel
 
@@ -317,9 +310,12 @@ class ListAudiosSequenceFragment : Fragment() {
 
     private fun bindAdapterMain(mView : View) {
         //create item empty
-        val itemAudio = ItemAudio(1, "My First List", "Audio aula 1", "")
-        val itemAudio2 = ItemAudio(2, "My First List", "Audio aula 1", "")
-        val itemAudio3 = ItemAudio(3, "My First List", "Audio aula 1", "")
+        val itemAudio =
+            ItemAudio(1, "My First List", "Audio aula 1", "")
+        val itemAudio2 =
+            ItemAudio(2, "My First List", "Audio aula 1", "")
+        val itemAudio3 =
+            ItemAudio(3, "My First List", "Audio aula 1", "")
 
         val list = mutableListOf<ItemAudio>()
         list.add(itemAudio)

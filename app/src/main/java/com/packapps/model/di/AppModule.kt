@@ -10,6 +10,7 @@ import com.packapps.model.di.AdaptersImpl
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.presenter.MainActivityPresenter
 import com.packapps.repository.RepositoryLocal
+import com.packapps.repository.database.AppDatabase
 import com.packapps.ui.adapters.FragmentListAudiosSeqAdapter
 import com.packapps.ui.adapters.MainCardAdapter
 import com.packapps.ui.adapters.MainCardOptionsAdapter
@@ -41,6 +42,8 @@ val appModule = module {
         )
     }
     single { MediaBroadcastNotificationActions(PublishSubject.create<String>()) }
+    //Room
+    single { AppDatabase.getDatabaseBuilder(androidContext()) }
 
     //Repository
     single { RepositoryLocal() }
