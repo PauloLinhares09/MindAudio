@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.packapps.repository.entity.ItemAudio
 import com.packapps.R
 import com.packapps.model.audio_core.*
-import com.packapps.model.dto.AuxAdapter
+import com.packapps.model.dto.ItemAudioAux
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.utils.LogApp
 import com.packapps.ui.adapters.MainCardOptionsAdapter
@@ -34,7 +34,7 @@ class ListAudiosSequenceFragment : Fragment() {
     private var replayAudio: Boolean = false
     private val TAG = "ListAudiosSequenceFragment"
 
-    private var itemAudioPlayingCurrent: AuxAdapter? = null
+    private var itemAudioPlayingCurrent: ItemAudioAux? = null
     lateinit var viewModel : ListAudioSeqFragmentViewModel
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
@@ -326,10 +326,10 @@ class ListAudiosSequenceFragment : Fragment() {
         list.add(itemAudio2)
         list.add(itemAudio3)
 
-        //convert to AuxAdapter item
-        val itemAuxList = mutableListOf<AuxAdapter>()
+        //convert to ItemAudioAux item
+        val itemAuxList = mutableListOf<ItemAudioAux>()
         list.forEach { itemAudio ->
-            val itemAux = AuxAdapter()
+            val itemAux = ItemAudioAux()
             itemAux.itemAudio = itemAudio
             itemAuxList.add(itemAux)
         }

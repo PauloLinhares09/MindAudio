@@ -7,16 +7,15 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.packapps.repository.entity.ItemAudio
 import com.packapps.R
 import com.packapps.model.audio_core.MediaPlayerApp
-import com.packapps.model.dto.AuxAdapter
+import com.packapps.model.dto.ItemAudioAux
 import io.reactivex.subjects.PublishSubject
 
 class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqAdapter.MyFragHolder>() {
-    var list = mutableListOf<AuxAdapter>()
+    var list = mutableListOf<ItemAudioAux>()
 
-    private val subjectClick = PublishSubject.create<AuxAdapter>()
+    private val subjectClick = PublishSubject.create<ItemAudioAux>()
 
     override fun getItemCount(): Int = list.size
 
@@ -83,13 +82,13 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
 
     }
 
-    fun updateList(list: MutableList<AuxAdapter>) {
+    fun updateList(list: MutableList<ItemAudioAux>) {
         this.list = list
 
         notifyDataSetChanged()
     }
 
-    fun updateJustItemOnPosition(itemAudio: AuxAdapter, reset : Boolean = false){
+    fun updateJustItemOnPosition(itemAudio: ItemAudioAux, reset : Boolean = false){
         if (reset){
             for (i in 0..list.size -1){
                 if (i != itemAudio.currentPosition)
