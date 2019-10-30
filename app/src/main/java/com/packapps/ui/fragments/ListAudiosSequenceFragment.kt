@@ -146,7 +146,11 @@ class ListAudiosSequenceFragment : Fragment() {
             LogApp.i("GALERY", "galery result")
            data?.data?.also {uri ->
                LogApp.i("GALERY", "galery uri: ${uri}")
-               managerPlayWithState(uri = uri)
+//               managerPlayWithState(uri = uri)
+               val bottomSheetNewAudio = BottomSheetNewAudioFragment()
+               bottomSheetNewAudio.setUri(uri)
+               bottomSheetNewAudio.show(activity?.supportFragmentManager!!, "SHEET_DIALOG")
+
                //get name of the file
 //               val cursor = activity?.contentResolver?.query(uri, null, null, null, null)
 //               cursor?.let {cursor ->

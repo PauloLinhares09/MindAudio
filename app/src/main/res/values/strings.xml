@@ -19,4 +19,6 @@
     <string name="previous">previous</string>
     <string name="audio_activeted">Áudio ativado</string>
     <string name="your_audio_is_active">Seu áudio está ativo</string>
+    <string name="audio_unvailable">Áudio inválido</string>
+    <string name="name_empty">Nome não pode ser vázio</string>
 </resources>
