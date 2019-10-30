@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.packapps.repository.entity.ItemAudio
 import com.packapps.R
 import com.packapps.model.audio_core.*
+import com.packapps.model.dto.AuxAdapter
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.utils.LogApp
 import com.packapps.ui.adapters.MainCardOptionsAdapter
@@ -33,7 +34,7 @@ class ListAudiosSequenceFragment : Fragment() {
     private var replayAudio: Boolean = false
     private val TAG = "ListAudiosSequenceFragment"
 
-    private var itemAudioPlayingCurrent: ItemAudio? = null
+    private var itemAudioPlayingCurrent: AuxAdapter? = null
     lateinit var viewModel : ListAudioSeqFragmentViewModel
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
@@ -181,41 +182,44 @@ class ListAudiosSequenceFragment : Fragment() {
 
 
     private fun listenClickFromAdapter() {
-        val disposable = presenter.adapter().getSubjectClick().subscribe { itemAudio ->
+        val disposable = presenter.adapter().getSubjectClick().subscribe { itemAudioAux ->
 
             LogApp.i(TAG, "button from adapter clicked")
             //Change state button for buffering for to show loading
-            itemAudio.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
-            presenter.adapter().updateJustItemOnPosition(itemAudio)
+            itemAudioAux.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
+
+            presenter.adapter().updateJustItemOnPosition(itemAudioAux)
 
             val state = mediaBrowserApp.getStateFromMediaCrontroller()
             val transportControllerCompat = mediaBrowserApp.getTransportController()
+
+
             if (state == PlaybackStateCompat.STATE_PLAYING){
 
 
-                if (itemAudio.id != itemAudioPlayingCurrent?.id ) {
+                if (itemAudioAux.itemAudio?.id != itemAudioPlayingCurrent?.itemAudio?.id ) {
                     transportControllerCompat.stop()
-                    itemAudioPlayingCurrent = itemAudio
+                    itemAudioPlayingCurrent = itemAudioAux
                     viewModel.getAudioUni(activity?.packageName ?: "")
                 }else{
-                    itemAudioPlayingCurrent = itemAudio
+                    itemAudioPlayingCurrent = itemAudioAux
                     transportControllerCompat.pause()
                 }
             }else {
 
                 if (itemAudioPlayingCurrent == null){
-                    itemAudioPlayingCurrent = itemAudio
+                    itemAudioPlayingCurrent = itemAudioAux
                     viewModel.getAudioUni(activity?.packageName ?: "")
                     return@subscribe
                 }else{
-                    if (itemAudio.id != itemAudioPlayingCurrent?.id){
+                    if (itemAudioAux.itemAudio?.id != itemAudioPlayingCurrent?.itemAudio?.id){
                         transportControllerCompat.stop()
-                        itemAudioPlayingCurrent = itemAudio
+                        itemAudioPlayingCurrent = itemAudioAux
                         viewModel.getAudioUni(activity?.packageName ?: "")
                         return@subscribe
                     }
 
-                    itemAudioPlayingCurrent = itemAudio
+                    itemAudioPlayingCurrent = itemAudioAux
                     if (!hasStopedAndAudioFocusAbandonment)
                         transportControllerCompat.play()
                     else
@@ -322,9 +326,17 @@ class ListAudiosSequenceFragment : Fragment() {
         list.add(itemAudio2)
         list.add(itemAudio3)
 
+        //convert to AuxAdapter item
+        val itemAuxList = mutableListOf<AuxAdapter>()
+        list.forEach { itemAudio ->
+            val itemAux = AuxAdapter()
+            itemAux.itemAudio = itemAudio
+            itemAuxList.add(itemAux)
+        }
+
         mView.rvItemsAudioSeq.layoutManager = presenter.layoutManager()
         mView.rvItemsAudioSeq.adapter = presenter.adapterMain()
-        presenter.adapterMain().updateList(list)
+        presenter.adapterMain().updateList(itemAuxList)
 
     }
 

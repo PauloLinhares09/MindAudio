@@ -1,5 +1,6 @@
 package com.packapps.repository.dao
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 import com.packapps.repository.entity.ItemAudio
@@ -14,6 +15,6 @@ interface ItemAudioDao {
     fun deleteAll()
 
     @Query("SELECT * FROM item_audio ORDER BY id ASC")
-    fun selectAll() : MutableLiveData<MutableList<ItemAudio>>
+    fun selectAll() : LiveData<MutableList<ItemAudio>>
 
 }
