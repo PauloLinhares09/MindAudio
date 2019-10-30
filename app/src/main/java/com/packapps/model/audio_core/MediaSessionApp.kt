@@ -1,6 +1,7 @@
 package com.packapps.model.audio_core
 
 import android.content.Context
+import android.net.Uri
 import android.os.SystemClock
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -105,8 +106,8 @@ class MediaSessionApp(androidContext : Context,
 
     }
 
-    fun loadPath(path: String) {
-        mediaPlayerApp.loadMedia(path)
+    fun loadPath(path: String, uri : Uri? = null) {
+        mediaPlayerApp.loadMedia(path, uri)
     }
 
     fun getUiControlViewModel() = audioFocusApp.uiControlsViewModel

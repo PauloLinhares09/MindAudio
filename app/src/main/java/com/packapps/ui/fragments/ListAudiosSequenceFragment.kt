@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -145,6 +146,7 @@ class ListAudiosSequenceFragment : Fragment() {
             LogApp.i("GALERY", "galery result")
            data?.data?.also {uri ->
                LogApp.i("GALERY", "galery uri: ${uri}")
+               managerPlayWithState(uri = uri)
                //get name of the file
 //               val cursor = activity?.contentResolver?.query(uri, null, null, null, null)
 //               cursor?.let {cursor ->
@@ -164,18 +166,20 @@ class ListAudiosSequenceFragment : Fragment() {
         viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer { path ->
             Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
             //Load media and play
-            mediaBrowserApp.loadPath(path)
-
-            val state = mediaBrowserApp.getStateFromMediaCrontroller()
-            val transportControllerCompat = mediaBrowserApp.getTransportController()
-            if (state == PlaybackStateCompat.STATE_PLAYING)
-                transportControllerCompat.pause()
-            else
-                transportControllerCompat.play()
-
-
+            managerPlayWithState(path)
 
         })
+    }
+
+    private fun managerPlayWithState(path: String = "", uri : Uri? = null) {
+        mediaBrowserApp.loadPath(path, uri)
+
+        val state = mediaBrowserApp.getStateFromMediaCrontroller()
+        val transportControllerCompat = mediaBrowserApp.getTransportController()
+        if (state == PlaybackStateCompat.STATE_PLAYING)
+            transportControllerCompat.pause()
+        else
+            transportControllerCompat.play()
     }
 
 
@@ -201,7 +205,7 @@ class ListAudiosSequenceFragment : Fragment() {
                     transportControllerCompat.pause()
                 }
             }else {
-                
+
                 if (itemAudioPlayingCurrent == null){
                     itemAudioPlayingCurrent = itemAudio
                     viewModel.getAudioUni(activity?.packageName ?: "")
