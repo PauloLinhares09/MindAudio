@@ -230,6 +230,11 @@ class ListAudiosSequenceFragment : Fragment() {
             }else {
 
                 if (itemAudioPlayingCurrent == null){
+                    //check config of the playing
+                    val dialogConfiguration = ConfigurationPlayingFragment()
+                    dialogConfiguration.show(activity?.supportFragmentManager!!, "DIALOG_CONFIG")
+
+
                     itemAudioPlayingCurrent = itemAudioAux
                     viewModel.getPathMedia(itemAudioAux)
                     return@subscribe
