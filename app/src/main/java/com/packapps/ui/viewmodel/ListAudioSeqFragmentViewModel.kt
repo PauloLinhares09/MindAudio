@@ -49,6 +49,9 @@ class ListAudioSeqFragmentViewModel : ViewModel() {
         return repository.saveItemsAudioFromRoom(itemAudio)
     }
 
+    fun deleAllItems() {
+        repository.deleteAll()
+    }
 
 
 }

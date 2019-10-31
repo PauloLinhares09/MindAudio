@@ -10,7 +10,7 @@ import com.packapps.repository.entity.ItemAudio
 @Database(entities = arrayOf(ItemAudio::class), version = 1)
 abstract class AppDatabase : RoomDatabase(){
 
-    abstract fun ItemAudioDao() : ItemAudioDao
+    abstract fun itemAudioDao() : ItemAudioDao
 
     companion object {
         var INSTANCE : AppDatabase? = null

@@ -1,6 +1,7 @@
 package com.packapps.ui.fragments
 
 import android.app.*
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
@@ -127,10 +128,31 @@ class ListAudiosSequenceFragment : Fragment() {
     }
 
     private fun observerGetIntentForOpenGalery() {
-        presenter.adapterOptions.publishSubject.subscribe { action_option ->
+        val a = presenter.adapterOptions.publishSubject.subscribe { action_option ->
             if (action_option == MainCardOptionsAdapter.MEDIA_CREATE){
                 startActivityForResult(viewModel.getIntentForOpenGalery(), REQUEST_CODE_GALERY)
             }
+            else if (action_option == MainCardOptionsAdapter.MEDIA_DELETE){
+                val dialog = AlertDialog.Builder(context).apply {
+                    setTitle(getString(R.string.to_delete_all_items))
+                    setMessage(getString(R.string.this_will_to_delete_))
+                    setPositiveButton(getString(R.string.to_delete), object : DialogInterface.OnClickListener{
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            viewModel.deleAllItems()
+
+                            dialog?.dismiss()
+                        }
+
+                    })
+                    setNegativeButton(getString(R.string.to_cancel), object : DialogInterface.OnClickListener{
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            dialog?.dismiss()
+                        }
+
+                    })
+                }
+                dialog?.show()             }
+
         }
     }
 

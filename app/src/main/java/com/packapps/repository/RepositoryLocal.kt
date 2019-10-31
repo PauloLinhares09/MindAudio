@@ -2,9 +2,6 @@ package com.packapps.repository
 
 import android.content.Intent
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.packapps.R
-import com.packapps.repository.dao.ItemAudioDao
 import com.packapps.repository.database.AppDatabase
 import com.packapps.repository.entity.ItemAudio
 import io.reactivex.Observable
@@ -14,7 +11,7 @@ class RepositoryLocal(val appDatabase: AppDatabase) {
     val listAllItemsAudioLiveData : LiveData<List<ItemAudio>>
 
     init {
-        val itemAudioDao = appDatabase.ItemAudioDao()
+        val itemAudioDao = appDatabase.itemAudioDao()
         listAllItemsAudioLiveData = itemAudioDao.selectAll()
     }
 
@@ -40,8 +37,12 @@ class RepositoryLocal(val appDatabase: AppDatabase) {
     }
 
     fun saveItemsAudioFromRoom(itemAudio : ItemAudio) : Long{
-        val itemAudioDao = appDatabase.ItemAudioDao()
+        val itemAudioDao = appDatabase.itemAudioDao()
         return itemAudioDao.insertItemAudio(itemAudio)
+    }
+
+    fun deleteAll() {
+        appDatabase.itemAudioDao().deleteAll()
     }
 
 }

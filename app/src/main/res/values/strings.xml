@@ -21,4 +21,8 @@
     <string name="your_audio_is_active">Seu áudio está ativo</string>
     <string name="audio_unvailable">Áudio inválido</string>
     <string name="name_empty">Nome não pode ser vázio</string>
+    <string name="to_delete">Deletar</string>
+    <string name="to_cancel">Cancelar</string>
+    <string name="to_delete_all_items">Deletar TODOS os itens</string>
+    <string name="this_will_to_delete_">Isso vai deletar todos os seus áudio salvos. Tem certeza que quer fazer isso, jovem ?</string>
 </resources>
