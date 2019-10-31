@@ -24,14 +24,15 @@ class ConfigurationPlayingFragment : DialogFragment() {
         // Inflate the layout for this fragment
         val mView = inflater.inflate(R.layout.fragment_configuration_playing, container, false)
 
-        mView.btCancel.setOnClickListener {
-            dismiss()
-        }
-        mView.btApply.setOnClickListener {
-            dismiss()
-        }
+        onClick(mView)
 
         //how much times
+        buttonHowManyTimes(mView)
+
+        return mView
+    }
+
+    private fun buttonHowManyTimes(mView: View) {
         mView.bt1x.isActivated = true
         mView.bt1x.setOnClickListener {
             mView.bt1x.isActivated = !bt1x.isActivated
@@ -41,8 +42,15 @@ class ConfigurationPlayingFragment : DialogFragment() {
             mView.bt1x.isActivated = false
             mView.bt2x.isActivated = !bt2x.isActivated
         }
+    }
 
-        return mView
+    private fun onClick(mView: View) {
+        mView.btCancel.setOnClickListener {
+            dismiss()
+        }
+        mView.btApply.setOnClickListener {
+            dismiss()
+        }
     }
 
 }
