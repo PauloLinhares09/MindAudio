@@ -314,18 +314,20 @@ class ListAudiosSequenceFragment : Fragment() {
 
     private fun bindAdapterMain(mView : View) {
         //create item empty
-        val list = viewModel.getItemsAudioFromRoom()
-        //convert to ItemAudioAux item
-        val itemAuxList = mutableListOf<ItemAudioAux>()
-        list.forEach { itemAudio ->
-            val itemAux = ItemAudioAux()
-            itemAux.itemAudio = itemAudio
-            itemAuxList.add(itemAux)
-        }
+        viewModel.getItemsAudioFromRoom().observe(this, Observer { list ->
+            //convert to ItemAudioAux item
+            val itemAuxList = mutableListOf<ItemAudioAux>()
+            list.forEach { itemAudio ->
+                val itemAux = ItemAudioAux()
+                itemAux.itemAudio = itemAudio
+                itemAuxList.add(itemAux)
+            }
 
-        mView.rvItemsAudioSeq.layoutManager = presenter.layoutManager()
-        mView.rvItemsAudioSeq.adapter = presenter.adapterMain()
-        presenter.adapterMain().updateList(itemAuxList)
+            mView.rvItemsAudioSeq.layoutManager = presenter.layoutManager()
+            mView.rvItemsAudioSeq.adapter = presenter.adapterMain()
+            presenter.adapterMain().updateList(itemAuxList)
+        })
+
 
     }
 

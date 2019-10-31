@@ -2,6 +2,7 @@ package com.packapps.repository
 
 import android.content.Intent
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.packapps.R
 import com.packapps.repository.dao.ItemAudioDao
 import com.packapps.repository.database.AppDatabase
@@ -9,6 +10,13 @@ import com.packapps.repository.entity.ItemAudio
 import io.reactivex.Observable
 
 class RepositoryLocal(val appDatabase: AppDatabase) {
+
+    val listAllItemsAudioLiveData : LiveData<List<ItemAudio>>
+
+    init {
+        val itemAudioDao = appDatabase.ItemAudioDao()
+        listAllItemsAudioLiveData = itemAudioDao.selectAll()
+    }
 
     fun getAudioUnit(packageName : String) : Observable<String>{
 
@@ -27,9 +35,8 @@ class RepositoryLocal(val appDatabase: AppDatabase) {
     }
 
 
-    fun getItemsAudioFromRoom() : MutableList<ItemAudio>{
-        val itemAudioDao = appDatabase.ItemAudioDao()
-        return itemAudioDao.selectAll()
+    fun getAllItemsAudioFromRoom() : LiveData<List<ItemAudio>>{
+        return listAllItemsAudioLiveData
     }
 
     fun saveItemsAudioFromRoom(itemAudio : ItemAudio) : Long{

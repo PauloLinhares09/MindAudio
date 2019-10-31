@@ -1,7 +1,6 @@
 package com.packapps.ui.viewmodel
 
 import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -42,8 +41,8 @@ class ListAudioSeqFragmentViewModel : ViewModel() {
         return repository.getFilesFromUserDevice()
     }
 
-    fun getItemsAudioFromRoom() : MutableList<ItemAudio>{
-        return repository.getItemsAudioFromRoom()
+    fun getItemsAudioFromRoom() : LiveData<List<ItemAudio>>{
+        return repository.getAllItemsAudioFromRoom()
     }
 
     fun saveItemAudioOnRoom(itemAudio: ItemAudio) : Long{
