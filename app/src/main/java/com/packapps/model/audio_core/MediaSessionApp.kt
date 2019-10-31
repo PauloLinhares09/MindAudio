@@ -6,6 +6,7 @@ import android.os.SystemClock
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.packapps.model.utils.LogApp
+import io.reactivex.subjects.PublishSubject
 
 
 class MediaSessionApp(androidContext : Context,
@@ -48,9 +49,6 @@ class MediaSessionApp(androidContext : Context,
 
 
                 notificaManagerApp.moveServiceToStatedState(getPlaybackState(), metaDataCompat)
-
-
-
 
             }
 
@@ -108,6 +106,10 @@ class MediaSessionApp(androidContext : Context,
 
     fun loadPath(path: String, uri : Uri? = null) {
         mediaPlayerApp.loadMedia(path, uri)
+    }
+
+    fun listenEndMediaPlayer() : PublishSubject<Boolean>{
+        return mediaPlayerApp.subject
     }
 
     fun getUiControlViewModel() = audioFocusApp.uiControlsViewModel

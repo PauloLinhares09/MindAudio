@@ -4,11 +4,13 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
 import com.packapps.model.utils.LogApp
+import io.reactivex.subjects.PublishSubject
 
 
-class MediaPlayerApp(val androidContext: Context) : MediaPlayer.OnCompletionListener {
+class MediaPlayerApp(val androidContext: Context, val subject: PublishSubject<Boolean>) : MediaPlayer.OnCompletionListener {
     override fun onCompletion(mp: MediaPlayer?) {
         LogApp.i("MediaPlayer", "Item audio end")
+        subject.onNext(true)
     }
 
 

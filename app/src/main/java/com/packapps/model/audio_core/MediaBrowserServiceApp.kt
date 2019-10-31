@@ -46,10 +46,6 @@ class MediaBrowserApp(
 
     private lateinit var mediaController : MediaControllerCompat
 
-
-
-
-
     private var mediaBrowser : MediaBrowserCompat
 
     init {
@@ -93,6 +89,16 @@ class MediaBrowserApp(
             , null
         )
         mediaBrowser.connect()
+
+
+
+        //listener end Media Player
+        val a = mediaSessionApp.listenEndMediaPlayer().subscribe { end ->
+            if (end){ //check if
+                getTransportController().play()
+            }
+        }
+
     }
 
 
@@ -106,6 +112,7 @@ class MediaBrowserApp(
     fun loadPath(path: String, uri : Uri? = null) {
         mediaSessionApp.loadPath(path, uri)
     }
+
 
 
 
@@ -157,6 +164,8 @@ class MediaBrowserServiceApp : MediaBrowserServiceCompat() {
             }
 
         }
+
+
 
 
 

@@ -31,7 +31,7 @@ val appModule = module {
     single{ FragmentListAudiosSeqAdapter() }
     //MediaSessionAPP
     single { PlaybackStateCompat.Builder() }
-    single { MediaPlayerApp(androidContext()) }
+    single { MediaPlayerApp(androidContext(), PublishSubject.create<Boolean>()) }
     single(named("int")) { PublishSubject.create<Int>() }
     single(named("triple")) { PublishSubject.create<Triple<Boolean, Notification, Boolean>>() }
     single { AudioFocusApp(androidContext()) }
