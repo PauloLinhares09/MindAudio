@@ -3,9 +3,13 @@ package com.packapps.model.audio_core
 import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
+import com.packapps.model.utils.LogApp
 
 
-class MediaPlayerApp(val androidContext: Context) {
+class MediaPlayerApp(val androidContext: Context) : MediaPlayer.OnCompletionListener {
+    override fun onCompletion(mp: MediaPlayer?) {
+        LogApp.i("MediaPlayer", "Item audio end")
+    }
 
 
     var mMediaPlayer : MediaPlayer? = null
@@ -13,6 +17,7 @@ class MediaPlayerApp(val androidContext: Context) {
     private fun initializePlayer(){
         releasePlayer()
         mMediaPlayer = MediaPlayer()
+        mMediaPlayer?.setOnCompletionListener(this)
     }
 
     fun loadMedia(path : String, uri : Uri? = null){
