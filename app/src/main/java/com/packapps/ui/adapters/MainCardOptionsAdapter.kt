@@ -8,10 +8,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.packapps.model.dto.ItemOption
 import com.packapps.R
+import io.reactivex.subjects.PublishSubject
 
-class MainCardOptionsAdapter : RecyclerView.Adapter<MainCardOptionsAdapter.MyOptionsHolder>(){
+class MainCardOptionsAdapter(val publishSubject: PublishSubject<Int>) : RecyclerView.Adapter<MainCardOptionsAdapter.MyOptionsHolder>(){
 
     var list = mutableListOf<ItemOption>()
+
+    companion object{
+        const val MEDIA_CREATE = 0
+        const val MEDIA_DELETE = 1
+    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyOptionsHolder {
@@ -26,6 +32,10 @@ class MainCardOptionsAdapter : RecyclerView.Adapter<MainCardOptionsAdapter.MyOpt
         val item = list.get(position)
         holder.tvTitle.text = item.title
         holder.ibIcon.setImageResource(item.icon)
+        //click item
+        holder.itemView.setOnClickListener {
+            publishSubject.onNext(position) //MEDIA_CREATE or MEDIA_DELETE / 0 or 1
+        }
     }
 
     fun updateList(list: MutableList<ItemOption>) {

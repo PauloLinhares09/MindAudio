@@ -7,15 +7,15 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.packapps.model.dto.ItemAudio
 import com.packapps.R
 import com.packapps.model.audio_core.MediaPlayerApp
+import com.packapps.model.dto.ItemAudioAux
 import io.reactivex.subjects.PublishSubject
 
 class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqAdapter.MyFragHolder>() {
-    var list = mutableListOf<ItemAudio>()
+    var list = mutableListOf<ItemAudioAux>()
 
-    private val subjectClick = PublishSubject.create<ItemAudio>()
+    private val subjectClick = PublishSubject.create<ItemAudioAux>()
 
     override fun getItemCount(): Int = list.size
 
@@ -26,18 +26,22 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
     }
 
     override fun onBindViewHolder(holder: MyFragHolder, position: Int) {
-        val item = list.get(position)
-        item.currentPosition = position
+        val itemAux = list.get(position)
+        itemAux.currentPosition = position
+        val item = itemAux.itemAudio
 
-        holder.tvTitle.text = item.listName
-        holder.tvDescription.text = item.audioName
+        holder.tvTitle.text = item?.listName
+        holder.tvDescription.text = item?.audioName
         holder.ibPlay.setOnClickListener {
             managerButtonPlay(holder, true)
             //Play
-            subjectClick.onNext(item)
+
+            subjectClick.onNext(itemAux)
+
+
         }
 
-        item.currentStatePlayback?.let { state ->
+        itemAux.currentStatePlayback?.let { state ->
 
             when(state){
                 MediaPlayerApp.MediaPlayerAppState.PAUSED -> {
@@ -78,13 +82,13 @@ class FragmentListAudiosSeqAdapter : RecyclerView.Adapter<FragmentListAudiosSeqA
 
     }
 
-    fun updateList(list: MutableList<ItemAudio>) {
+    fun updateList(list: MutableList<ItemAudioAux>) {
         this.list = list
 
         notifyDataSetChanged()
     }
 
-    fun updateJustItemOnPosition(itemAudio: ItemAudio, reset : Boolean = false){
+    fun updateJustItemOnPosition(itemAudio: ItemAudioAux, reset : Boolean = false){
         if (reset){
             for (i in 0..list.size -1){
                 if (i != itemAudio.currentPosition)

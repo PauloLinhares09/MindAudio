@@ -11,6 +11,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -102,9 +103,10 @@ class MediaBrowserApp(
 
     fun getUiControlViewModel(): UiControlsViewModel = mediaSessionApp.getUiControlViewModel()
 
-    fun loadPath(path: String) {
-        mediaSessionApp.loadPath(path)
+    fun loadPath(path: String, uri : Uri? = null) {
+        mediaSessionApp.loadPath(path, uri)
     }
+
 
 
 }

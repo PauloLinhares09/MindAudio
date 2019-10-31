@@ -1,13 +1,10 @@
 package com.packapps.ui.fragments
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
+import android.app.*
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -17,18 +14,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.packapps.model.dto.ItemAudio
+import com.packapps.repository.entity.ItemAudio
 import com.packapps.R
 import com.packapps.model.audio_core.*
+import com.packapps.model.dto.ItemAudioAux
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.utils.LogApp
-import com.packapps.ui.MainActivity
+import com.packapps.ui.adapters.MainCardOptionsAdapter
 import com.packapps.ui.viewmodel.ListAudioSeqFragmentViewModel
 
 import kotlinx.android.synthetic.main.fragment_list_audio_seq.view.*
@@ -40,12 +35,14 @@ class ListAudiosSequenceFragment : Fragment() {
     private var replayAudio: Boolean = false
     private val TAG = "ListAudiosSequenceFragment"
 
-    private var itemAudioPlayingCurrent: ItemAudio? = null
+    private var itemAudioPlayingCurrent: ItemAudioAux? = null
     lateinit var viewModel : ListAudioSeqFragmentViewModel
 
     val presenter : ListAudiosSeqFragmentPresente by inject()
 
     val notificationBroadcast : MediaBroadcastNotificationActions by inject()
+
+    val REQUEST_CODE_GALERY = 109
 
 
 //    val mediaSessionApp : MediaSessionApp by inject()
@@ -72,6 +69,8 @@ class ListAudiosSequenceFragment : Fragment() {
         observerPuclishSubjectFromNotificationControll()
 
         observeUiControlsViewModel()
+
+        observerGetIntentForOpenGalery()
     }
 
     /**
@@ -128,91 +127,125 @@ class ListAudiosSequenceFragment : Fragment() {
         return mView
     }
 
+    private fun observerGetIntentForOpenGalery() {
+        val a = presenter.adapterOptions.publishSubject.subscribe { action_option ->
+            if (action_option == MainCardOptionsAdapter.MEDIA_CREATE){
+                startActivityForResult(viewModel.getIntentForOpenGalery(), REQUEST_CODE_GALERY)
+            }
+            else if (action_option == MainCardOptionsAdapter.MEDIA_DELETE){
+                val dialog = AlertDialog.Builder(context).apply {
+                    setTitle(getString(R.string.to_delete_all_items))
+                    setMessage(getString(R.string.this_will_to_delete_))
+                    setPositiveButton(getString(R.string.to_delete), object : DialogInterface.OnClickListener{
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            viewModel.deleAllItems()
+
+                            dialog?.dismiss()
+                        }
+
+                    })
+                    setNegativeButton(getString(R.string.to_cancel), object : DialogInterface.OnClickListener{
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            dialog?.dismiss()
+                        }
+
+                    })
+                }
+                dialog?.show()             }
+
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_GALERY && resultCode == Activity.RESULT_OK){
+            LogApp.i("GALERY", "galery result")
+           data?.data?.also {uri ->
+               LogApp.i("GALERY", "galery uri: ${uri}")
+//               managerPlayWithState(uri = uri)
+               val bottomSheetNewAudio = BottomSheetNewAudioFragment()
+               bottomSheetNewAudio.setUri(uri)
+               bottomSheetNewAudio.show(activity?.supportFragmentManager!!, "SHEET_DIALOG")
+
+               //get name of the file
+//               val cursor = activity?.contentResolver?.query(uri, null, null, null, null)
+//               cursor?.let {cursor ->
+//                   if (cursor.moveToFirst()){
+//                       val fileName = cursor.getColumnName(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+//                       LogApp.i("GALERY", "galery file name: ${fileName}")
+//                   }
+//
+//               }
+
+           }
+
+        }
+    }
+
     private fun observerDataFromRepository() {
         viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer { path ->
             Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
             //Load media and play
-            mediaBrowserApp.loadPath(path)
-
-            val state = mediaBrowserApp.getStateFromMediaCrontroller()
-            val transportControllerCompat = mediaBrowserApp.getTransportController()
-            if (state == PlaybackStateCompat.STATE_PLAYING)
-                transportControllerCompat.pause()
-            else
-                transportControllerCompat.play()
-
-
+            managerPlayWithState(path)
 
         })
     }
 
+    private fun managerPlayWithState(path: String = "", uri : Uri? = null) {
+        mediaBrowserApp.loadPath(path, uri)
+
+        val state = mediaBrowserApp.getStateFromMediaCrontroller()
+        val transportControllerCompat = mediaBrowserApp.getTransportController()
+        if (state == PlaybackStateCompat.STATE_PLAYING)
+            transportControllerCompat.pause()
+        else
+            transportControllerCompat.play()
+    }
+
 
     private fun listenClickFromAdapter() {
-        val disposable = presenter.adapter().getSubjectClick().subscribe { itemAudio ->
+        val disposable = presenter.adapter().getSubjectClick().subscribe { itemAudioAux ->
 
-            LogApp.i(TAG, "button from adapter clicked")
+            LogApp.i(TAG, "button from adapter clicked: ${itemAudioAux.itemAudio?.audioPath}")
             //Change state button for buffering for to show loading
-            itemAudio.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
-            presenter.adapter().updateJustItemOnPosition(itemAudio)
+            itemAudioAux.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
+
+            presenter.adapter().updateJustItemOnPosition(itemAudioAux)
 
             val state = mediaBrowserApp.getStateFromMediaCrontroller()
             val transportControllerCompat = mediaBrowserApp.getTransportController()
+
+
             if (state == PlaybackStateCompat.STATE_PLAYING){
 
 
-                if (itemAudio.id != itemAudioPlayingCurrent?.id ) {
+                if (itemAudioAux.itemAudio?.id != itemAudioPlayingCurrent?.itemAudio?.id ) {
                     transportControllerCompat.stop()
-                    itemAudioPlayingCurrent = itemAudio
-                    viewModel.getAudioUni(activity?.packageName ?: "")
+                    itemAudioPlayingCurrent = itemAudioAux
+                    viewModel.getPathMedia(itemAudioAux)
                 }else{
-                    itemAudioPlayingCurrent = itemAudio
+                    itemAudioPlayingCurrent = itemAudioAux
                     transportControllerCompat.pause()
                 }
             }else {
 
-//                //##### just test notification
-//                val CHANNEL_ID = "notification_id"
-//
-//                val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-//                    val mChannel = NotificationChannel(CHANNEL_ID, "First Notification", NotificationManager.IMPORTANCE_HIGH)
-//                    mChannel.enableLights(true)
-//                    mChannel.lightColor = Color.GREEN
-//                    mChannel.enableVibration(true)
-//                    mChannel.description = "App first channel"
-//                    notificationManager.createNotificationChannel(mChannel)
-//
-//                }
-//
-//                val notificationId = 0
-//                val notificationBuilder = NotificationCompat.Builder(context!!, CHANNEL_ID).apply {
-//                    setContentTitle("Title")
-//                    setContentText("Description")
-//                    setSmallIcon(R.drawable.ic_arrow_next)
-//                }
-//
-//                notificationManager.notify(notificationId, notificationBuilder.build())
-//
-//                //###### end test
-
-
                 if (itemAudioPlayingCurrent == null){
-                    itemAudioPlayingCurrent = itemAudio
-                    viewModel.getAudioUni(activity?.packageName ?: "")
+                    itemAudioPlayingCurrent = itemAudioAux
+                    viewModel.getPathMedia(itemAudioAux)
                     return@subscribe
                 }else{
-                    if (itemAudio.id != itemAudioPlayingCurrent?.id){
+                    if (itemAudioAux.itemAudio?.id != itemAudioPlayingCurrent?.itemAudio?.id){
                         transportControllerCompat.stop()
-                        itemAudioPlayingCurrent = itemAudio
-                        viewModel.getAudioUni(activity?.packageName ?: "")
+                        itemAudioPlayingCurrent = itemAudioAux
+                        viewModel.getPathMedia(itemAudioAux)
                         return@subscribe
                     }
 
-                    itemAudioPlayingCurrent = itemAudio
+                    itemAudioPlayingCurrent = itemAudioAux
                     if (!hasStopedAndAudioFocusAbandonment)
                         transportControllerCompat.play()
                     else
-                        viewModel.getAudioUni(activity?.packageName ?: "")
+                        viewModel.getPathMedia(itemAudioAux)
                 }
             }
 
@@ -303,18 +336,20 @@ class ListAudiosSequenceFragment : Fragment() {
 
     private fun bindAdapterMain(mView : View) {
         //create item empty
-        val itemAudio = ItemAudio(1, "My First List", "Audio aula 1", "")
-        val itemAudio2 = ItemAudio(2, "My First List", "Audio aula 1", "")
-        val itemAudio3 = ItemAudio(3, "My First List", "Audio aula 1", "")
+        viewModel.getItemsAudioFromRoom().observe(this, Observer { list ->
+            //convert to ItemAudioAux item
+            val itemAuxList = mutableListOf<ItemAudioAux>()
+            list.forEach { itemAudio ->
+                val itemAux = ItemAudioAux()
+                itemAux.itemAudio = itemAudio
+                itemAuxList.add(itemAux)
+            }
 
-        val list = mutableListOf<ItemAudio>()
-        list.add(itemAudio)
-        list.add(itemAudio2)
-        list.add(itemAudio3)
+            mView.rvItemsAudioSeq.layoutManager = presenter.layoutManager()
+            mView.rvItemsAudioSeq.adapter = presenter.adapterMain()
+            presenter.adapterMain().updateList(itemAuxList)
+        })
 
-        mView.rvItemsAudioSeq.layoutManager = presenter.layoutManager()
-        mView.rvItemsAudioSeq.adapter = presenter.adapterMain()
-        presenter.adapterMain().updateList(list)
 
     }
 

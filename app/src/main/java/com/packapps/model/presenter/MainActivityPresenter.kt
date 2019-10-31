@@ -24,4 +24,6 @@ class MainActivityPresenter(private val adaptersContract: AdaptersContract,
 
     fun adapterMainTabOptions() = adaptersContract.adapterMainTabOptions(adapterTabOptionsAdapter)
 
+
+
 }

@@ -15,22 +15,27 @@ class MediaPlayerApp(val androidContext: Context) {
         mMediaPlayer = MediaPlayer()
     }
 
-    fun loadMedia(path : String){
+    fun loadMedia(path : String, uri : Uri? = null){
         initializePlayer()
+        var uriAux : Uri? = null
         //file
-        val uri = Uri.parse(path)
+        if (path.isEmpty()) {
+            uri?.let {
+                uriAux = uri
+            }
+        }else{
+            uriAux = Uri.parse(path)
+        }
         //data source
         try {
-            mMediaPlayer?.setDataSource(androidContext, uri)
-
-            mMediaPlayer?.prepare()
+            uriAux?.let {
+                mMediaPlayer?.setDataSource(androidContext, it)
+                mMediaPlayer?.prepare()
+            }
 
         }catch (e : Exception){
             e.printStackTrace()
         }
-
-
-
     }
 
     fun releasePlayer(){

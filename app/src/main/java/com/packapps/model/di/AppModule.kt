@@ -10,6 +10,7 @@ import com.packapps.model.di.AdaptersImpl
 import com.packapps.model.presenter.ListAudiosSeqFragmentPresente
 import com.packapps.model.presenter.MainActivityPresenter
 import com.packapps.repository.RepositoryLocal
+import com.packapps.repository.database.AppDatabase
 import com.packapps.ui.adapters.FragmentListAudiosSeqAdapter
 import com.packapps.ui.adapters.MainCardAdapter
 import com.packapps.ui.adapters.MainCardOptionsAdapter
@@ -23,7 +24,7 @@ val appModule = module {
     //Single instance from repository
     single<AdaptersContract>{ AdaptersImpl() }
     single{ MainCardAdapter() }
-    single { MainCardOptionsAdapter() }
+    single { MainCardOptionsAdapter(PublishSubject.create<Int>()) }
     single<SnapHelper> { LinearSnapHelper() }
 
     //### For fragments
@@ -41,9 +42,11 @@ val appModule = module {
         )
     }
     single { MediaBroadcastNotificationActions(PublishSubject.create<String>()) }
+    //Room
+    single { AppDatabase.getDatabaseBuilder(androidContext()) }
 
     //Repository
-    single { RepositoryLocal() }
+    single { RepositoryLocal(get()) }
 
     //RX
     single { CompositeDisposable() }
@@ -52,7 +55,7 @@ val appModule = module {
 
     //Factory
     factory { MainActivityPresenter(get(), get(), get(), get()) }
-    factory { ListAudiosSeqFragmentPresente(get(), get(), get(), get(), get()) }
+    factory { ListAudiosSeqFragmentPresente(get(), get(), get(), get(), get(), get()) }
     factory { MediaSessionApp(androidContext() , get(), get(), get(), get()) }
     factory {
         MediaBrowserApp(
@@ -61,6 +64,8 @@ val appModule = module {
             get(named("int"))
         )
     }
+
+
 
 
 
