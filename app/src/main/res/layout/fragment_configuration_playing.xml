@@ -8,7 +8,7 @@
 
 
     <Button
-            android:id="@+id/textView"
+            android:id="@+id/bt1x"
             android:layout_width="95dp"
             android:layout_height="95dp"
             android:layout_marginTop="16dp"
@@ -19,16 +19,16 @@
             android:drawableTint="@android:color/white"
             android:gravity="center"
             android:padding="@dimen/fab_margin"
-            android:text="2x"
+            android:text="1x"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toTopOf="@+id/btCancel"
-            app:layout_constraintEnd_toStartOf="@+id/textView6"
+            app:layout_constraintEnd_toStartOf="@+id/bt2x"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <Button
-            android:id="@+id/textView6"
+            android:id="@+id/bt2x"
             android:layout_width="95dp"
             android:layout_height="95dp"
             android:background="@drawable/button_config"
@@ -37,13 +37,13 @@
             android:drawableTint="@android:color/white"
             android:gravity="center"
             android:padding="@dimen/fab_margin"
-            android:text="5x"
+            android:text="2x"
             android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            app:layout_constraintBottom_toBottomOf="@+id/bt1x"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toTopOf="@+id/textView" />
+            app:layout_constraintStart_toEndOf="@+id/bt1x"
+            app:layout_constraintTop_toTopOf="@+id/bt1x" />
 
     <TextView
             android:id="@+id/textView5"
