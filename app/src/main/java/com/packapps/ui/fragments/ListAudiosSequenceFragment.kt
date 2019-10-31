@@ -184,7 +184,7 @@ class ListAudiosSequenceFragment : Fragment() {
     private fun listenClickFromAdapter() {
         val disposable = presenter.adapter().getSubjectClick().subscribe { itemAudioAux ->
 
-            LogApp.i(TAG, "button from adapter clicked")
+            LogApp.i(TAG, "button from adapter clicked: ${itemAudioAux.itemAudio?.audioPath}")
             //Change state button for buffering for to show loading
             itemAudioAux.currentStatePlayback = MediaPlayerApp.MediaPlayerAppState.BUFFERING
 
@@ -200,7 +200,7 @@ class ListAudiosSequenceFragment : Fragment() {
                 if (itemAudioAux.itemAudio?.id != itemAudioPlayingCurrent?.itemAudio?.id ) {
                     transportControllerCompat.stop()
                     itemAudioPlayingCurrent = itemAudioAux
-                    viewModel.getAudioUni(activity?.packageName ?: "")
+                    viewModel.getPathMedia(itemAudioAux)
                 }else{
                     itemAudioPlayingCurrent = itemAudioAux
                     transportControllerCompat.pause()
@@ -209,13 +209,13 @@ class ListAudiosSequenceFragment : Fragment() {
 
                 if (itemAudioPlayingCurrent == null){
                     itemAudioPlayingCurrent = itemAudioAux
-                    viewModel.getAudioUni(activity?.packageName ?: "")
+                    viewModel.getPathMedia(itemAudioAux)
                     return@subscribe
                 }else{
                     if (itemAudioAux.itemAudio?.id != itemAudioPlayingCurrent?.itemAudio?.id){
                         transportControllerCompat.stop()
                         itemAudioPlayingCurrent = itemAudioAux
-                        viewModel.getAudioUni(activity?.packageName ?: "")
+                        viewModel.getPathMedia(itemAudioAux)
                         return@subscribe
                     }
 
@@ -223,7 +223,7 @@ class ListAudiosSequenceFragment : Fragment() {
                     if (!hasStopedAndAudioFocusAbandonment)
                         transportControllerCompat.play()
                     else
-                        viewModel.getAudioUni(activity?.packageName ?: "")
+                        viewModel.getPathMedia(itemAudioAux)
                 }
             }
 
@@ -314,18 +314,7 @@ class ListAudiosSequenceFragment : Fragment() {
 
     private fun bindAdapterMain(mView : View) {
         //create item empty
-        val itemAudio =
-            ItemAudio(1, "My First List", "Audio aula 1", "")
-        val itemAudio2 =
-            ItemAudio(2, "My First List", "Audio aula 1", "")
-        val itemAudio3 =
-            ItemAudio(3, "My First List", "Audio aula 1", "")
-
-        val list = mutableListOf<ItemAudio>()
-        list.add(itemAudio)
-        list.add(itemAudio2)
-        list.add(itemAudio3)
-
+        val list = viewModel.getItemsAudioFromRoom()
         //convert to ItemAudioAux item
         val itemAuxList = mutableListOf<ItemAudioAux>()
         list.forEach { itemAudio ->

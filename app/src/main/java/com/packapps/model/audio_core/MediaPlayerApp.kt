@@ -24,9 +24,7 @@ class MediaPlayerApp(val androidContext: Context) {
                 uriAux = uri
             }
         }else{
-            uri?.let {
-                uriAux = uri
-            }
+            uriAux = Uri.parse(path)
         }
         //data source
         try {

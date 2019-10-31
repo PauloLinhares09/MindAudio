@@ -27,7 +27,7 @@ class RepositoryLocal(val appDatabase: AppDatabase) {
     }
 
 
-    fun getItemsAudioFromRoom() : LiveData<MutableList<ItemAudio>>{
+    fun getItemsAudioFromRoom() : MutableList<ItemAudio>{
         val itemAudioDao = appDatabase.ItemAudioDao()
         return itemAudioDao.selectAll()
     }

@@ -15,6 +15,6 @@ interface ItemAudioDao {
     fun deleteAll()
 
     @Query("SELECT * FROM item_audio ORDER BY id ASC")
-    fun selectAll() : LiveData<MutableList<ItemAudio>>
+    fun selectAll() : MutableList<ItemAudio>
 
 }

@@ -1,9 +1,11 @@
 package com.packapps.ui.viewmodel
 
 import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.packapps.model.dto.ItemAudioAux
 import com.packapps.repository.RepositoryLocal
 import com.packapps.repository.entity.ItemAudio
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -32,11 +34,15 @@ class ListAudioSeqFragmentViewModel : ViewModel() {
                     }))
     }
 
+    fun getPathMedia(itemAudioAux: ItemAudioAux){
+        pathAudioUnit.postValue(itemAudioAux.itemAudio?.audioPath)
+    }
+
     fun getIntentForOpenGalery() : Intent{
         return repository.getFilesFromUserDevice()
     }
 
-    fun getItemsAudioFromRoom() : LiveData<MutableList<ItemAudio>>{
+    fun getItemsAudioFromRoom() : MutableList<ItemAudio>{
         return repository.getItemsAudioFromRoom()
     }
 
