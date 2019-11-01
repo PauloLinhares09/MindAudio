@@ -4,7 +4,6 @@ import android.app.*
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -183,16 +182,16 @@ class ListAudiosSequenceFragment : Fragment() {
     }
 
     private fun observerDataFromRepository() {
-        viewModel.pathAudioUnit.observe(viewLifecycleOwner, Observer { path ->
-            Toast.makeText(context, "Path: $path", Toast.LENGTH_LONG).show()
+        viewModel.itemAudio.observe(viewLifecycleOwner, Observer { itemAudio ->
+            Toast.makeText(context, "Path: ${itemAudio.audioPath}", Toast.LENGTH_LONG).show()
             //Load media and play
-            managerPlayWithState(path)
+            managerPlayWithState(itemAudio)
 
         })
     }
 
-    private fun managerPlayWithState(path: String = "", uri : Uri? = null) {
-        mediaBrowserApp.loadPath(path, uri)
+    private fun managerPlayWithState(itemAudio: ItemAudio) {
+        mediaBrowserApp.loadPath(itemAudio)
 
         val state = mediaBrowserApp.getStateFromMediaCrontroller()
         val transportControllerCompat = mediaBrowserApp.getTransportController()
@@ -232,6 +231,7 @@ class ListAudiosSequenceFragment : Fragment() {
                 if (itemAudioPlayingCurrent == null){
                     //check config of the playing
                     val dialogConfiguration = ConfigurationPlayingFragment()
+                    dialogConfiguration.setItemAudio(itemAudioAux?.itemAudio)
                     dialogConfiguration.show(activity?.supportFragmentManager!!, "DIALOG_CONFIG")
 
 

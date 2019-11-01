@@ -6,6 +6,7 @@ import android.os.SystemClock
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.packapps.model.utils.LogApp
+import com.packapps.repository.entity.ItemAudio
 import io.reactivex.subjects.PublishSubject
 
 
@@ -104,8 +105,8 @@ class MediaSessionApp(androidContext : Context,
 
     }
 
-    fun loadPath(path: String, uri : Uri? = null) {
-        mediaPlayerApp.loadMedia(path, uri)
+    fun loadPath(itemAudio: ItemAudio) {
+        mediaPlayerApp.loadMedia(itemAudio)
     }
 
     fun listenEndMediaPlayer() : PublishSubject<Boolean>{
@@ -124,7 +125,9 @@ class MediaSessionApp(androidContext : Context,
     }
 
     fun getPlaybackState(): PlaybackStateCompat = mediaSesion.controller.playbackState
-
+    fun getItemAudioCurrent(): ItemAudio? {
+        return mediaPlayerApp.getItemAudioCurrent()
+    }
 
 
 }

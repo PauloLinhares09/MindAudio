@@ -2,9 +2,12 @@ package com.packapps.repository
 
 import android.content.Intent
 import androidx.lifecycle.LiveData
+import com.packapps.repository.dao.PlayConfigDao
 import com.packapps.repository.database.AppDatabase
 import com.packapps.repository.entity.ItemAudio
+import com.packapps.repository.entity.PlayConfig
 import io.reactivex.Observable
+import io.reactivex.Observer
 
 class RepositoryLocal(val appDatabase: AppDatabase) {
 
@@ -43,6 +46,22 @@ class RepositoryLocal(val appDatabase: AppDatabase) {
 
     fun deleteAll() {
         appDatabase.itemAudioDao().deleteAll()
+    }
+
+    fun getPlayConfigFromItemAudio(id: Long): Observable<PlayConfig> {
+        return Observable.create {sub ->
+            sub.onNext(appDatabase.playConfig().selectPlayConfig(id))
+            sub.onComplete()
+
+        }
+
+    }
+
+    fun insertPlayConfig(playConfig: PlayConfig): Observable<Long> {
+        return Observable.create { sub ->
+            sub.onNext(appDatabase.playConfig().insert(playConfig))
+            sub.onComplete()
+        }
     }
 
 }

@@ -28,6 +28,8 @@ import androidx.media.session.MediaButtonReceiver
 import com.packapps.BuildConfig
 import com.packapps.R
 import com.packapps.model.utils.LogApp
+import com.packapps.repository.RepositoryLocal
+import com.packapps.repository.entity.ItemAudio
 import com.packapps.ui.MainActivity
 import com.packapps.ui.viewmodel.UiControlsViewModel
 import io.reactivex.subjects.PublishSubject
@@ -92,13 +94,6 @@ class MediaBrowserApp(
 
 
 
-        //listener end Media Player
-        val a = mediaSessionApp.listenEndMediaPlayer().subscribe { end ->
-            if (end){ //check if
-                getTransportController().play()
-            }
-        }
-
     }
 
 
@@ -109,8 +104,8 @@ class MediaBrowserApp(
 
     fun getUiControlViewModel(): UiControlsViewModel = mediaSessionApp.getUiControlViewModel()
 
-    fun loadPath(path: String, uri : Uri? = null) {
-        mediaSessionApp.loadPath(path, uri)
+    fun loadPath(itemAudio: ItemAudio) {
+        mediaSessionApp.loadPath(itemAudio)
     }
 
 
@@ -128,6 +123,7 @@ class MediaBrowserServiceApp : MediaBrowserServiceCompat() {
 
 
     val mediaSessionApp : MediaSessionApp by inject()
+    val repositoryLocal : RepositoryLocal by inject()
 
 
     override fun onCreate() {
@@ -163,6 +159,21 @@ class MediaBrowserServiceApp : MediaBrowserServiceCompat() {
                 stopSelf()
             }
 
+        }
+
+        val end = mediaSessionApp.listenEndMediaPlayer().subscribe {ended ->
+            if (ended){
+                val itemAudioCurrent = mediaSessionApp.getItemAudioCurrent()
+                itemAudioCurrent?.let { itemAudio ->
+                    //get playConfig
+                    val playConfig = repositoryLocal.getPlayConfigFromItemAudio(itemAudio.id)
+                    playConfig?.let {
+                        if (it.timeCurrent <= it.howManyTimes){
+                            mediaSessionApp.mediaPlayerApp.play()
+                        }
+                    }
+                }
+            }
         }
 
 

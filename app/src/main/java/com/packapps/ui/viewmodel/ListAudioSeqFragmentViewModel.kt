@@ -17,24 +17,24 @@ class ListAudioSeqFragmentViewModel : ViewModel() {
     lateinit var repository : RepositoryLocal
 
     //livedata
-    val pathAudioUnit = MutableLiveData<String>()
+    val itemAudio = MutableLiveData<ItemAudio>()
 
     fun getAudioUni(packageName : String){
-        composite.add(
-            repository.getAudioUnit(packageName)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({audioPath ->
-                    pathAudioUnit.postValue(audioPath)
-
-        },
-                    {
-                        it.printStackTrace()
-                    }))
+//        composite.add(
+//            repository.getAudioUnit(packageName)
+//                .subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({audioPath ->
+//                    itemAudio.postValue(audioPath)
+//
+//        },
+//                    {
+//                        it.printStackTrace()
+//                    }))
     }
 
     fun getPathMedia(itemAudioAux: ItemAudioAux){
-        pathAudioUnit.postValue(itemAudioAux.itemAudio?.audioPath)
+        itemAudio.postValue(itemAudioAux.itemAudio)
     }
 
     fun getIntentForOpenGalery() : Intent{

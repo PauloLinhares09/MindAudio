@@ -4,10 +4,17 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.net.Uri
 import com.packapps.model.utils.LogApp
+import com.packapps.repository.entity.ItemAudio
 import io.reactivex.subjects.PublishSubject
 
 
-class MediaPlayerApp(val androidContext: Context, val subject: PublishSubject<Boolean>) : MediaPlayer.OnCompletionListener {
+class MediaPlayerApp(
+    val androidContext: Context,
+    val subject: PublishSubject<Boolean>
+) : MediaPlayer.OnCompletionListener {
+
+    private var itemAudio: ItemAudio? = null
+
     override fun onCompletion(mp: MediaPlayer?) {
         LogApp.i("MediaPlayer", "Item audio end")
         subject.onNext(true)
@@ -22,17 +29,11 @@ class MediaPlayerApp(val androidContext: Context, val subject: PublishSubject<Bo
         mMediaPlayer?.setOnCompletionListener(this)
     }
 
-    fun loadMedia(path : String, uri : Uri? = null){
+    fun loadMedia(itemAudio: ItemAudio){
         initializePlayer()
-        var uriAux : Uri? = null
-        //file
-        if (path.isEmpty()) {
-            uri?.let {
-                uriAux = uri
-            }
-        }else{
-            uriAux = Uri.parse(path)
-        }
+        this.itemAudio = itemAudio
+        val path = itemAudio.audioPath
+        val uriAux = Uri.parse(path)
         //data source
         try {
             uriAux?.let {
@@ -79,6 +80,10 @@ class MediaPlayerApp(val androidContext: Context, val subject: PublishSubject<Bo
     fun isPlaying(): Boolean = mMediaPlayer?.isPlaying ?: false
     fun setVolume(mediaVolumeDefault: Float) {
         mMediaPlayer?.setVolume(mediaVolumeDefault, mediaVolumeDefault)
+    }
+
+    fun getItemAudioCurrent() : ItemAudio? {
+        return itemAudio
     }
 
 
